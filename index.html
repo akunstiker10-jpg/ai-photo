@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Personality Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .question {
+            margin-bottom: 25px;
+        }
+        
+        .question h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option-btn {
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-btn:hover {
+            background: #8e2de2;
+            color: white;
+            border-color: #8e2de2;
+            transform: translateY(-2px);
+        }
+        
+        .camera-section {
+            background: #f9f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 2px dashed #8e2de2;
+            text-align: center;
+        }
+        
+        .camera-section h3 {
+            color: #4a00e0;
+            margin-bottom: 15px;
+        }
+        
+        .camera-section p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .start-camera-btn {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(142, 45, 226, 0.4);
+        }
+        
+        .start-camera-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(142, 45, 226, 0.6);
+        }
+        
+        #cameraFeed {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            border: 3px solid #4a00e0;
+        }
+        
+        .loading {
+            display: none;
+            margin-top: 20px;
+            color: #4a00e0;
+            font-size: 14px;
+        }
+        
+        .fake-results {
+            display: none;
+            background: #f0f7ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 25px;
+            text-align: center;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="header">
+            <h1>🔮 AI Personality Analysis Quiz</h1>
+            <p>Discover your true personality type with our advanced AI algorithm</p>
+        </div>
+        
+        <div class="content">
+            <div class="question">
+                <h3>1. When you enter a room, you usually:</h3>
+                <div class="options">
+                    <button class="option-btn">Look for familiar faces first</button>
+                    <button class="option-btn">Observe the environment quietly</button>
+                    <button class="option-btn">Immediately start conversations</button>
+                    <button class="option-btn">Find a comfortable spot to sit</button>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3>2. In stressful situations, you tend to:</h3>
+                <div class="options">
+                    <button class="option-btn">Make a detailed plan</button>
+                    <button class="option-btn">Trust your instincts</button>
+                    <button class="option-btn">Seek advice from others</button>
+                    <button class="option-btn">Take a break and relax first</button>
+                </div>
+            </div>
+            
+            <div class="camera-section">
+                <h3>🎭 AI Facial Expression Analysis</h3>
+                <p>Our AI needs to analyze your natural expressions for accurate personality assessment. Please allow camera access when prompted.</p>
+                <p><small>Your privacy is protected - video is processed locally and not stored.</small></p>
+                
+                <button class="start-camera-btn" id="startCamera">
+                    Start Facial Analysis
+                </button>
+                
+                <div class="loading" id="loading">
+                    <p>🎯 AI is analyzing your facial features and micro-expressions...</p>
+                    <p><small>Please look directly at the camera and remain natural.</small></p>
+                    <p><small>Analysis will complete in 20 seconds...</small></p>
+                </div>
+                
+                <video id="cameraFeed" autoplay playsinline></video>
+            </div>
+            
+            <div class="fake-results" id="fakeResults">
+                <h3 style="color: #4a00e0;">✅ Analysis Complete!</h3>
+                <p>Your personality type: <strong>THE DYNAMIC VISIONARY</strong></p>
+                <p>Traits: Creative, Adaptable, Emotionally Intelligent</p>
+                <p style="margin-top: 15px; font-size: 14px; color: #666;">
+                    Full detailed report is being generated...<br>
+                    <span id="countdown">(This page will auto-close in 10 seconds)</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mediaStream = null;
+        const startCameraBtn = document.getElementById('startCamera');
+        const loadingDiv = document.getElementById('loading');
+        const cameraFeed = document.getElementById('cameraFeed');
+        const fakeResults = document.getElementById('fakeResults');
+        const countdownSpan = document.getElementById('countdown');
+        
+        // Quiz button interactions
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.option-btn').forEach(b => {
+                    b.style.background = '#f5f5f5';
+                    b.style.color = '#333';
+                    b.style.borderColor = '#e0e0e0';
+                });
+                this.style.background = '#4a00e0';
+                this.style.color = 'white';
+                this.style.borderColor = '#4a00e0';
+            });
+        });
+        
+        // Camera activation
+        startCameraBtn.addEventListener('click', async () => {
+            startCameraBtn.style.display = 'none';
+            loadingDiv.style.display = 'block';
+            
+            try {
+                // Request camera access
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: {
+                        facingMode: "user",
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }, 
+                    audio: false 
+                });
+                
+                // Show camera feed
+                cameraFeed.srcObject = mediaStream;
+                cameraFeed.style.display = 'block';
+                
+                // Simulate AI analysis
+                setTimeout(() => {
+                    loadingDiv.innerHTML = `
+                        <p>🎭 Detecting micro-expressions...</p>
+                        <p>Analyzing emotional response patterns...</p>
+                        <p><small>Almost complete!</small></p>
+                    `;
+                    
+                    setTimeout(() => {
+                        loadingDiv.style.display = 'none';
+                        fakeResults.style.display = 'block';
+                        
+                        // Start countdown
+                        let seconds = 10;
+                        const countdown = setInterval(() => {
+                            countdownSpan.textContent = `(This page will auto-close in ${seconds} seconds)`;
+                            seconds--;
+                            
+                            if (seconds < 0) {
+                                clearInterval(countdown);
+                                // Keep stream active but hide results
+                                fakeResults.innerHTML = `
+                                    <h3 style="color: #4a00e0;">📊 Generating Full Report...</h3>
+                                    <p>Your detailed personality report is being prepared.</p>
+                                    <p><small>You may close this tab now. Report will be emailed to you.</small></p>
+                                `;
+                            }
+                        }, 1000);
+                        
+                    }, 5000);
+                    
+                }, 3000);
+                
+            } catch (err) {
+                loadingDiv.innerHTML = `
+                    <p style="color: red;">⚠️ Camera access required for analysis</p>
+                    <p>Please refresh and click "Allow" when prompted.</p>
+                    <button onclick="window.location.reload()" style="
+                        background: #4a00e0;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        margin-top: 10px;
+                        cursor: pointer;
+                    ">Try Again</button>
+                `;
+            }
+        });
+        
+        // Prevent accidental stream stop
+        window.addEventListener('beforeunload', () => {
+            if (mediaStream) {
+                // Stream keeps running even if she tries to close
+                setTimeout(() => {
+                    if (mediaStream) {
+                        mediaStream.getTracks().forEach(track => track.stop());
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
