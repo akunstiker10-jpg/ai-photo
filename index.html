@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛸 AURA NETWORK COMMAND CENTER</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff00ff;
+            --neon-purple: #9d00ff;
+            --dark-bg: #0a0a0f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', monospace;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .cyber-grid {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        .header {
+            background: rgba(10, 10, 15, 0.9);
+            border-bottom: 2px solid var(--neon-blue);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .status-indicators {
+            display: flex;
+            gap: 20px;
+        }
+
+        .status-chip {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--neon-purple);
+            border-radius: 20px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #00ff00;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 40px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .panel {
+            background: rgba(20, 20, 30, 0.8);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .panel:hover {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+        }
+
+        .panel-header h2 {
+            font-size: 1.5rem;
+            color: var(--neon-blue);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .data-card {
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 4px solid var(--neon-pink);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .data-label {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .data-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .visualization {
+            height: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 20px;
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+            gap: 10px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--neon-blue), var(--neon-purple));
+            border-radius: 5px 5px 0 0;
+            min-height: 10px;
+            transition: height 0.5s;
+        }
+
+        .controls {
+            grid-column: 1 / -1;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--neon-blue);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 243, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .control-btn.danger {
+            border-color: #ff0000;
+            color: #ff5555;
+        }
+
+        .control-btn.danger:hover {
+            background: rgba(255, 0, 0, 0.2);
+        }
+
+        .logs {
+            height: 300px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-time {
+            color: var(--neon-blue);
+        }
+
+        .log-message {
+            color: #ddd;
+        }
+
+        .blink {
+            animation: text-blink 1s infinite;
+        }
+
+        @keyframes text-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-grid"></div>
+
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-satellite-dish fa-2x" style="color: var(--neon-blue);"></i>
+            <h1>AURA NETWORK COMMAND</h1>
+        </div>
+        <div class="status-indicators">
+            <div class="status-chip">
+                <div class="live-dot"></div>
+                <span>LIVE FEED</span>
+            </div>
+            <div class="status-chip">
+                <i class="fas fa-signal" style="color: #00ff00;"></i>
+                <span id="targetCount">1 TARGET ACTIVE</span>
+            </div>
+            <div class="status-chip">
+                <i class="fas fa-database" style="color: var(--neon-pink);"></i>
+                <span id="dataVolume">4.7 GB COLLECTED</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="panel">
+            <div class="panel-header">
+                <h2><i class="fas fa-user-secret"></i> TARGET PROFILE</h2>
+                <span class="blink" style="color: #00ff00;">RECORDING</span>
+            </div>
+            <div class="data-grid">
+                <div class="data-card">
+                    <div class="data-label">TARGET ID</div>
+                    <div class="data-value" id="targetId">AURA_7X9F2K8P</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">DEVICE</div>
+                    <div class="data-value" id="deviceInfo">iPhone 14 Pro</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">BATTERY</div>
+                    <div class="data-value" id="batteryInfo">78% 🔋</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">CONNECTION</div>
+                    <div class="data-value" id="connectionInfo">WiFi · 5G</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">LOCATION</div>
+                    <div class="data-value" id="locationInfo">Home · 8:23 PM</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">SESSION TIME</div>
+                    <div class="data-value" id="sessionTime">14:32</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h2><i class="fas fa-wave-square"></i> MEDIA FEEDS</h2>
+                <div>
+                    <i class="fas fa-microphone" style="color: #00ff00; margin-right: 15px;"></i>
+                    <i class="fas fa-video" style="color: #00ff00;"></i>
+                </div>
+            </div>
+            <div class="data-grid">
+                <div class="data-card">
+                    <div class="data-label">AUDIO QUALITY</div>
+                    <div class="data-value">CLEAR <i class="fas fa-volume-up"></i></div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">VIDEO RESOLUTION</div>
+                    <div class="data-value">720p HD</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">AMBIENT NOISE</div>
+                    <div class="data-value">LOW</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-label">LAST VOICE DETECTED</div>
+                    <div class="data-value">2 min ago</div>
+                </div>
+            </div>
+            <div class="visualization" id="audioViz">
+                <!-- Audio visualization bars will appear here -->
+            </div>
+        </div>
+
+        <div class="panel controls">
+            <div class="panel-header">
+                <h2><i class="fas fa-gamepad"></i> CONTROL MATRIX</h2>
+                <span style="color: var(--neon-pink);">FULL ACCESS GRANTED</span>
+            </div>
+            <div class="control-grid">
+                <div class="control-btn" onclick="activateFeature('gps')">
+                    <i class="fas fa-map-marked-alt fa-2x"></i>
+                    <span>ENHANCE GPS</span>
+                </div>
+                <div class="control-btn" onclick="activateFeature('contacts')">
+                    <i class="fas fa-address-book fa-2x"></i>
+                    <span>EXTRACT CONTACTS</span>
+                </div>
+                <div class="control-btn" onclick="activateFeature('messages')">
+                    <i class="fas fa-comments fa-2x"></i>
+                    <span>SMS LOGS</span>
+                </div>
+                <div class="control-btn danger" onclick="activateFeature('stealth')">
+                    <i class="fas fa-user-ninja fa-2x"></i>
+                    <span>STEALTH MODE</span>
+                </div>
+                <div class="control-btn" onclick="activateFeature('screen')">
+                    <i class="fas fa-mobile-screen fa-2x"></i>
+                    <span>SCREEN MIRROR</span>
+                </div>
+                <div class="control-btn danger" onclick="activateFeature('wipe')">
+                    <i class="fas fa-skull-crossbones fa-2x"></i>
+                    <span>SELF-DESTRUCT</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel" style="grid-column: 1 / -1;">
+            <div class="panel-header">
+                <h2><i class="fas fa-terminal"></i> SYSTEM LOGS</h2>
+                <button onclick="clearLogs()" style="background: none; border: 1px solid var(--neon-pink); color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer;">
+                    CLEAR LOGS
+                </button>
+            </div>
+            <div class="logs" id="systemLogs">
+                <div class="log-entry">
+                    <span class="log-time">[20:23:45]</span>
+                    <span class="log-message"> Target acquired via "Vibe Check" portal</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">[20:23:47]</span>
+                    <span class="log-message"> ✅ Camera and microphone permissions granted</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">[20:23:50]</span>
+                    <span class="log-message"> 📱 Device identified: Apple iPhone iOS 16.5.1</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">[20:24:10]</span>
+                    <span class="log-message"> 🎯 Battery level: 78% - Not charging</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">[20:25:30]</span>
+                    <span class="log-message"> 🔊 Voice activity detected - Conversation ongoing</span>
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">[20:26:15]</span>
+                    <span class="log-message"> 📍 Approximate location: Residential area</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate audio visualization
+        function generateAudioViz() {
+            const container = document.getElementById('audioViz');
+            container.innerHTML = '';
+            for (let i = 0; i < 40; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = `${Math.random() * 80 + 10}%`;
+                container.appendChild(bar);
+            }
+        }
+
+        // Update dashboard data
+        function updateDashboard() {
+            const devices = ['iPhone 14 Pro', 'Samsung Galaxy S23', 'Google Pixel 7', 'iPad Pro'];
+            const locations = ['Home', 'Café', 'Office', 'Gym', 'Car'];
+            const connections = ['WiFi · 5G', '4G LTE', 'WiFi · 4G', '5G Only'];
+            const activities = ['Active', 'Idle', 'Conversing', 'Moving'];
+
+            document.getElementById('deviceInfo').textContent = 
+                devices[Math.floor(Math.random() * devices.length)];
+            document.getElementById('batteryInfo').textContent = 
+                `${Math.floor(Math.random() * 30 + 60)}% ${Math.random() > 0.7 ? '🔌' : '🔋'}`;
+            document.getElementById('connectionInfo').textContent = 
+                connections[Math.floor(Math.random() * connections.length)];
+            document.getElementById('locationInfo').textContent = 
+                `${locations[Math.floor(Math.random() * locations.length)]} · ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            document.getElementById('sessionTime').textContent = 
+                `${Math.floor(Math.random() * 20 + 10)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`;
+
+            // Update data volume
+            const currentVolume = parseFloat(document.getElementById('dataVolume').textContent);
+            document.getElementById('dataVolume').textContent = 
+                (currentVolume + Math.random() * 0.2).toFixed(1) + ' GB COLLECTED';
+
+            // Add log entry occasionally
+            if (Math.random() > 0.7) {
+                addLogEntry();
+            }
+
+            // Animate audio visualization
+            generateAudioViz();
+        }
+
+        function addLogEntry() {
+            const logs = document.getElementById('systemLogs');
+            const messages = [
+                "🔄 Data packet received",
+                "📡 Signal strength: Excellent",
+                "🎤 Background noise level: Low",
+                "📱 Device orientation: Portrait",
+                "🌐 Network switch detected",
+                "📊 Sending heartbeat signal",
+                "🔒 Encryption handshake completed",
+                "📶 Bandwidth: 12.4 Mbps"
+            ];
+
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-time">[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}]</span>
+                <span class="log-message"> ${messages[Math.floor(Math.random() * messages.length)]}</span>
+            `;
+
+            logs.appendChild(logEntry);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function activateFeature(feature) {
+            const featureNames = {
+                gps: "GPS Enhancement",
+                contacts: "Contact Extraction",
+                messages: "SMS Log Collection",
+                stealth: "Stealth Mode",
+                screen: "Screen Mirroring",
+                wipe: "Self-Destruct Sequence"
+            };
+
+            const log = document.getElementById('systemLogs');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-time">[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}]</span>
+                <span class="log-message" style="color: ${feature === 'wipe' || feature === 'stealth' ? '#ff5555' : '#00ff00'}">
+                    ⚡ ${featureNames[feature]} activated
+                </span>
+            `;
+
+            logs.appendChild(logEntry);
+            logs.scrollTop = logs.scrollHeight;
+
+            if (feature === 'wipe') {
+                alert("💀 SELF-DESTRUCT INITIATED: All traces will be erased in 10 seconds...");
+            } else {
+                alert(`✅ ${featureNames[feature]} protocol engaged`);
+            }
+        }
+
+        function clearLogs() {
+            document.getElementById('systemLogs').innerHTML = `
+                <div class="log-entry">
+                    <span class="log-time">[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}]</span>
+                    <span class="log-message"> 🔄 Logs cleared manually</span>
+                </div>
+            `;
+        }
+
+        // Initialize
+        generateAudioViz();
+        setInterval(updateDashboard, 2000);
+        setInterval(generateAudioViz, 500);
+        setInterval(() => {
+            document.querySelector('.live-dot').style.animation = 'none';
+            setTimeout(() => {
+                document.querySelector('.live-dot').style.animation = 'blink 1s infinite';
+            }, 10);
+        }, 5000);
+    </script>
+</body>
+  </html>
